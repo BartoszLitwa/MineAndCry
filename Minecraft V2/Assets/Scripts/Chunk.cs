@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class Chunk
 {
@@ -18,10 +19,14 @@ public class Chunk
     List<int> transparentTriangles = new List<int>();
     Material[] materials = new Material[2];
     public byte[,,] voxelMap = new byte[VoxelData.ChunkWidth, VoxelData.ChunkHeight, VoxelData.ChunkWidth];
+    public Queue<VoxelMod> modifications = new Queue<VoxelMod>();
     World world;
 
+    public Vector3 Position;
+
     private bool _isActive;
-    public bool isVoxelMapPopulated = false;
+    private bool isVoxelMapPopulated = false;
+    private bool threadLocked = false;
 
     public Chunk(ChunkCord _coord, World _world, bool generateOnLoad)
     {
@@ -46,13 +51,28 @@ public class Chunk
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(coord.x * VoxelData.ChunkWidth, 0f, coord.z * VoxelData.ChunkWidth);
         chunkObject.name = "Chunk" + coord.x + "," + coord.z;
+        Position = chunkObject.transform.position;
 
-        PopulateVoxelMap();
-        UpdateChunk();
+        Thread myThread = new Thread(new ThreadStart(PopulateVoxelMap));
+        myThread.Start();
     }
 
-    void UpdateChunk()
+    public void UpdateChunk()
     {
+        Thread mythread = new Thread(new ThreadStart(_updateChunk));
+        mythread.Start(); //Start new thread
+    }
+
+    private void _updateChunk()
+    {
+        threadLocked = true;
+
+        while(modifications.Count > 0)
+        {
+            VoxelMod v = modifications.Dequeue(); //removes last voxelmod form queue
+            Vector3 pos = v.position -= Position;
+            voxelMap[(int)pos.x, (int)pos.y, (int)pos.z] = v.ID;
+        }
         ClearMeshdata();
 
         for (int y = 0; y < VoxelData.ChunkHeight; y++) //Height loop 
@@ -67,7 +87,12 @@ public class Chunk
             }
         }
 
-        CreateMesh();
+        lock (world.ChunksToDraw) //As soon it get there it locks it and unlock it after
+        {
+            world.ChunksToDraw.Enqueue(this);
+        }
+
+        threadLocked = false;
     }
 
     void ClearMeshdata()
@@ -75,6 +100,7 @@ public class Chunk
         VertexIndex = 0;
         vertices.Clear();
         triangles.Clear();
+        transparentTriangles.Clear();
         uvs.Clear();
     }
 
@@ -88,9 +114,15 @@ public class Chunk
         }
     }
 
-    public Vector3 Position
+    public bool isEditable
     {
-        get { return chunkObject.transform.position; }
+        get
+        {
+            if (!isVoxelMapPopulated || threadLocked)
+                return false;
+            else
+                return true;
+        }
     }
 
     bool IsVoxelInChunk(int x, int y, int z)
@@ -114,7 +146,7 @@ public class Chunk
 
         UpdateSurroundingChunks(xCheck, yCheck, zCheck);
 
-        UpdateChunk();
+        _updateChunk();
     }
 
     void UpdateSurroundingChunks(int x, int y, int z)
@@ -127,7 +159,7 @@ public class Chunk
 
             if(!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                world.getChunkFromvector3(thisVoxel + Position).UpdateChunk();
+                world.getChunkFromvector3(thisVoxel + Position)._updateChunk();
             }
         }
     }
@@ -150,8 +182,8 @@ public class Chunk
         int yCheck = Mathf.FloorToInt(pos.y);
         int zCheck = Mathf.FloorToInt(pos.z); //Round down
 
-        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
-        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
+        xCheck -= Mathf.FloorToInt(Position.x);
+        zCheck -= Mathf.FloorToInt(Position.z);
 
         return voxelMap[xCheck, yCheck, zCheck];
     }
@@ -169,6 +201,7 @@ public class Chunk
             }
         }
 
+        _updateChunk();
         isVoxelMapPopulated = true;
     }
 
@@ -227,7 +260,7 @@ public class Chunk
         uvs.Add(new Vector2(x + VoxelData.NormalizedBlockTextureSize, y + VoxelData.NormalizedBlockTextureSize));
     }
 
-    void CreateMesh()
+    public void CreateMesh()
     {
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();

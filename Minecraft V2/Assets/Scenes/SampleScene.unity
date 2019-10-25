@@ -1904,6 +1904,26 @@ MonoBehaviour:
     bottomFacetexture: 11
     leftFacetexture: 11
     rightFacetexture: 11
+  - BlockName: Planks
+    IsSolid: 1
+    IsTransparent: 0
+    icon: {fileID: -4927627658427533749, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
+    backFacetexture: 4
+    frontFacetexture: 4
+    topFacetexture: 4
+    bottomFacetexture: 4
+    leftFacetexture: 4
+    rightFacetexture: 4
+  - BlockName: Leaves
+    IsSolid: 1
+    IsTransparent: 1
+    icon: {fileID: 5679390536090785944, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
+    backFacetexture: 16
+    frontFacetexture: 16
+    topFacetexture: 16
+    bottomFacetexture: 16
+    leftFacetexture: 16
+    rightFacetexture: 16
   debugScreen: {fileID: 1867516049}
 --- !u!1 &1640825206
 GameObject:
