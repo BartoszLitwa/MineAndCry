@@ -27,6 +27,8 @@ public class World : MonoBehaviour
     Queue<Queue<VoxelMod>> modifications = new Queue<Queue<VoxelMod>>();
     public Queue<Chunk> ChunksToDraw = new Queue<Chunk>();
 
+    private bool _inUI = false;
+
     private void Start()
     {
         Random.InitState(Seed);
@@ -116,23 +118,25 @@ public class World : MonoBehaviour
         {
             Queue<VoxelMod> queue = modifications.Dequeue();
 
-            while (queue.Count > 0)
+            if (queue != null)
             {
-                VoxelMod v = queue.Dequeue();
-                ChunkCord c = GetChunkCoordFromvector3(v.position);
-
-                if (chunks[c.x, c.z] == null)
+                while (queue.Count > 0)
                 {
-                    chunks[c.x, c.z] = new Chunk(c, this, true);
-                    ActiveChunks.Add(c);
+                    VoxelMod v = queue.Dequeue();
+                    ChunkCord c = GetChunkCoordFromvector3(v.position);
+
+                    if (chunks[c.x, c.z] == null)
+                    {
+                        chunks[c.x, c.z] = new Chunk(c, this, true);
+                        ActiveChunks.Add(c);
+                    }
+
+                    chunks[c.x, c.z].modifications.Enqueue(v);
+
+                    if (!chunksToUpdate.Contains(chunks[c.x, c.z]))
+                        chunksToUpdate.Add(chunks[c.x, c.z]);
                 }
-
-                chunks[c.x, c.z].modifications.Enqueue(v);
-
-                if (!chunksToUpdate.Contains(chunks[c.x, c.z]))
-                    chunksToUpdate.Add(chunks[c.x, c.z]);
             }
-
         }
 
         ApplyingModifications = false;
@@ -228,6 +232,12 @@ public class World : MonoBehaviour
         return blocktypes[GetVoxel(pos)].IsTransparent;
     }
 
+    public bool inUI
+    {
+        get {  return _inUI; }
+        set { _inUI = value; }
+    }
+
     public byte GetVoxel(Vector3 pos)
     {
         //Immutable Pass
@@ -271,6 +281,7 @@ public class World : MonoBehaviour
                 if (PerlinNoise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, Biome.treePlacementScale) > Biome.treePlacementThreshold)
                 {
                     modifications.Enqueue(Structure.MakeTree(pos, Biome.minTreeHeight, Biome.maxTreeHeight));
+                    voxelValue = (byte)VoxelData.BlockTypes.Grass;
                 }
             }
         }

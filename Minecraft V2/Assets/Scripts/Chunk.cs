@@ -73,6 +73,7 @@ public class Chunk
             Vector3 pos = v.position -= Position;
             voxelMap[(int)pos.x, (int)pos.y, (int)pos.z] = v.ID;
         }
+
         ClearMeshdata();
 
         for (int y = 0; y < VoxelData.ChunkHeight; y++) //Height loop 
@@ -159,7 +160,7 @@ public class Chunk
 
             if(!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                world.getChunkFromvector3(thisVoxel + Position)._updateChunk();
+                world.getChunkFromvector3(thisVoxel + Position + VoxelData.faceCheks[f])._updateChunk();
             }
         }
     }
