@@ -10,6 +10,11 @@ public class World : MonoBehaviour
     public Transform player;
     public Vector3 spawnPosition;
 
+    [Range(0.95f, 0f)]
+    public float globalLightLevel;
+    public Color day;
+    public Color night;
+
     public Material material;
     public Material transparentMaterial;
     public Blocktype[] blocktypes;
@@ -28,6 +33,8 @@ public class World : MonoBehaviour
     public Queue<Chunk> ChunksToDraw = new Queue<Chunk>();
 
     private bool _inUI = false;
+    public GameObject creativeInventoryWindow;
+    public GameObject cursorSlot;
 
     private void Start()
     {
@@ -44,6 +51,9 @@ public class World : MonoBehaviour
     private void Update()
     {
         playerChunkCoord = GetChunkCoordFromvector3(player.position);
+
+        Shader.SetGlobalFloat("GlobalLightlevel", globalLightLevel);
+        Camera.main.backgroundColor = Color.Lerp(day, night, globalLightLevel);
 
         if (!playerChunkCoord.Equals(playerLastCoord))
         {
@@ -235,7 +245,21 @@ public class World : MonoBehaviour
     public bool inUI
     {
         get {  return _inUI; }
-        set { _inUI = value; }
+        set {
+            _inUI = value;
+            if (_inUI)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                creativeInventoryWindow.SetActive(true);
+                cursorSlot.SetActive(true);
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                creativeInventoryWindow.SetActive(false);
+                cursorSlot.SetActive(false);
+            }
+        }
     }
 
     public byte GetVoxel(Vector3 pos)
