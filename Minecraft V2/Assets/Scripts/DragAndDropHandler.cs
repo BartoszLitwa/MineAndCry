@@ -81,7 +81,8 @@ public class DragAndDropHandler : MonoBehaviour
                 if (clickedSlot.itemslot.stack.amount > 64) //If after adding items is more than 64(stack size)
                     clickedSlot.itemslot.stack.amount = 64;
 
-                //cursorSlot.itemslot.TakeAll();
+                clickedSlot.UpdateSlot();
+                cursorSlot.itemslot.TakeAll();
             }
         }
     }

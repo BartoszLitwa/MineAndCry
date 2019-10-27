@@ -1,10 +1,10 @@
-﻿Shader "Minecraft/Blocks" {
+﻿Shader "Minecraft/TransparentBlocks" {
 	Properties{
 		_MainTex ("Block texture Atlas", 2D) = "white" {}
 	}
 
 	SubShader{
-		Tags {"RenderType" = "Opaque"}
+		Tags {"Queue" = "AlphaTest" "IgnoreProjector" = "True" "RenderType" = "TransparentCutout"}
 		LOD 100
 		Lighting Off
 
@@ -51,7 +51,7 @@
 				shade = clamp(1 - shade, minGlobalLightLevel, maxGlobalLightLevel);
 				float localLightLevel = clamp(GlobalLightlevel + i.color.a, 0, 1);
 
-				//clip(col.a - 0.5);
+				clip(col.a - 0.5);
 				col = lerp(col, float4(0, 0, 0, 1), shade);
 				return col;
 			}

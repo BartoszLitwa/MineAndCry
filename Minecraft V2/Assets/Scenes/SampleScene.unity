@@ -51,7 +51,7 @@ LightmapSettings:
     m_IndirectOutputScale: 1
     m_AlbedoBoost: 1
     m_EnvironmentLightingMode: 1
-    m_EnableBakedLightmaps: 1
+    m_EnableBakedLightmaps: 0
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
     serializedVersion: 12
@@ -975,97 +975,6 @@ MonoBehaviour:
   highlight: {fileID: 999220259}
   player: {fileID: 1823657084}
   slotIndex: 0
---- !u!1 &705507993
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 705507995}
-  - component: {fileID: 705507994}
-  m_Layer: 0
-  m_Name: Directional Light
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!108 &705507994
-Light:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705507993}
-  m_Enabled: 1
-  serializedVersion: 9
-  m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
-  m_Range: 10
-  m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 2
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 0.2
-    m_CullingMatrixOverride:
-      e00: 1
-      e01: 0
-      e02: 0
-      e03: 0
-      e10: 0
-      e11: 1
-      e12: 0
-      e13: 0
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-    m_UseCullingMatrixOverride: 0
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingLayerMask: 1
-  m_Lightmapping: 1
-  m_LightShadowCasterMode: 0
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
-  m_UseBoundingSphereOverride: 0
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
---- !u!4 &705507995
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: 0.13052616, y: 0, z: 0, w: 0.9914449}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 963194228}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 15, y: 0, z: 0}
 --- !u!1001 &770317376
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1398,7 +1307,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -1428,8 +1337,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 1.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 705507995}
+  m_Children: []
   m_Father: {fileID: 1823657083}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1845,7 +1753,6 @@ GameObject:
   - component: {fileID: 1515824346}
   - component: {fileID: 1515824349}
   - component: {fileID: 1515824348}
-  - component: {fileID: 1515824347}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -1867,19 +1774,6 @@ Transform:
   m_Father: {fileID: 1924441713}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1515824347
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1515824345}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1515824348
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1968,19 +1862,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f913d49138713f34bbda10acbba42f47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Seed: 214748634
+  settings:
+    version: 0.01
+    viewDistance: 5
+    enableThreading: 1
+    seed: 0
+    mouseSensitivity: 1
   Biome: {fileID: 11400000, guid: 843fb84a9e2bdf142bb352ba8caa2e02, type: 2}
   player: {fileID: 1823657083}
   spawnPosition: {x: 0, y: 0, z: 0}
-  globalLightLevel: 0
+  globalLightLevel: 0.95
   day: {r: 0, g: 1, b: 1, a: 0}
   night: {r: 0, g: 0.038069975, b: 0.31132078, a: 0}
   material: {fileID: 2100000, guid: 8097bfad91bb0a54eb07cb7ba0428f18, type: 2}
-  transparentMaterial: {fileID: 2100000, guid: 57329f68d197dcd48a47fb9be7312c2b, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: 2219f5d93c0f1594bb519eba7c9a3f2f, type: 2}
   blocktypes:
   - BlockName: Air
     IsSolid: 0
-    IsTransparent: 1
+    renderNeighbourFaces: 1
+    transparency: 1
     icon: {fileID: 0}
     backFacetexture: 0
     frontFacetexture: 0
@@ -1990,7 +1890,8 @@ MonoBehaviour:
     rightFacetexture: 0
   - BlockName: Bedrock
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: 1688966812959152157, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 17
     frontFacetexture: 17
@@ -2000,7 +1901,8 @@ MonoBehaviour:
     rightFacetexture: 17
   - BlockName: Grass
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: -4064466556441594091, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 3
     frontFacetexture: 3
@@ -2010,7 +1912,8 @@ MonoBehaviour:
     rightFacetexture: 3
   - BlockName: Stone
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: 1456812944503901478, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 1
     frontFacetexture: 1
@@ -2020,7 +1923,8 @@ MonoBehaviour:
     rightFacetexture: 1
   - BlockName: Dirt
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: -3259639945200120147, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 2
     frontFacetexture: 2
@@ -2030,7 +1934,8 @@ MonoBehaviour:
     rightFacetexture: 2
   - BlockName: Sand
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: 8422400266057342736, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 18
     frontFacetexture: 18
@@ -2040,7 +1945,8 @@ MonoBehaviour:
     rightFacetexture: 18
   - BlockName: OakWood
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: -1039932325359862343, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 20
     frontFacetexture: 20
@@ -2050,7 +1956,8 @@ MonoBehaviour:
     rightFacetexture: 20
   - BlockName: Cobble
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: 8183907946595112663, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 16
     frontFacetexture: 16
@@ -2060,7 +1967,8 @@ MonoBehaviour:
     rightFacetexture: 16
   - BlockName: Glass
     IsSolid: 1
-    IsTransparent: 1
+    renderNeighbourFaces: 1
+    transparency: 1
     icon: {fileID: 2778678527414411416, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 49
     frontFacetexture: 49
@@ -2070,7 +1978,8 @@ MonoBehaviour:
     rightFacetexture: 49
   - BlockName: Brick
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: 8957779504253491017, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 7
     frontFacetexture: 7
@@ -2080,7 +1989,8 @@ MonoBehaviour:
     rightFacetexture: 7
   - BlockName: Planks
     IsSolid: 1
-    IsTransparent: 0
+    renderNeighbourFaces: 0
+    transparency: 0
     icon: {fileID: -4927627658427533749, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 4
     frontFacetexture: 4
@@ -2090,7 +2000,8 @@ MonoBehaviour:
     rightFacetexture: 4
   - BlockName: Leaves
     IsSolid: 1
-    IsTransparent: 1
+    renderNeighbourFaces: 1
+    transparency: 0.75
     icon: {fileID: 5679390536090785944, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 52
     frontFacetexture: 52
@@ -2230,7 +2141,6 @@ GameObject:
   - component: {fileID: 1737497684}
   - component: {fileID: 1737497687}
   - component: {fileID: 1737497686}
-  - component: {fileID: 1737497685}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -2252,19 +2162,6 @@ Transform:
   m_Father: {fileID: 1306493278}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &1737497685
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1737497683}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1737497686
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2360,12 +2257,12 @@ MonoBehaviour:
   walkSpeed: 4
   sprintSpeed: 6
   jumpForce: 5
-  playerWidth: 0.3
-  boundsTolerance: 0.1
+  playerWidth: 0.25
+  boundsTolerance: 0
   highlightBlock: {fileID: 1924441713}
   placeBlock: {fileID: 1306493278}
   checkIncrement: 0.1
-  reach: 8
+  reach: 6
   toolbar: {fileID: 646179584}
 --- !u!1 &1867516049
 GameObject:

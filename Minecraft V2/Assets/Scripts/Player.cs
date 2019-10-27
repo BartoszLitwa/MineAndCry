@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
         cam = GameObject.Find("Main Camera").transform;
         world = GameObject.Find("World").GetComponent<World>();
 
-        Cursor.lockState = CursorLockMode.Locked;
+        world.inUI = false;
     }
 
     private void Update()
@@ -60,16 +60,17 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         if (!world.inUI)
-        {
-            CalcualteVelocity();
-
+        {  
             if (jumpRequest)
                 Jump();
 
-            transform.Rotate(Vector3.up * mouseHorizontal);
-            cam.Rotate(Vector3.right * -mouseVertical);
-            transform.Translate(velocity, Space.World);
+            transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity);
+            cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity);
         }
+
+        CalcualteVelocity();
+
+        transform.Translate(velocity, Space.World);
     }
 
     private void CalcualteVelocity()
@@ -106,6 +107,9 @@ public class Player : MonoBehaviour
 
     private void GetPlayerInput()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
         mouseHorizontal = Input.GetAxis("Mouse X");
@@ -122,7 +126,26 @@ public class Player : MonoBehaviour
         if (highlightBlock.gameObject.activeSelf || placeBlock.gameObject.activeSelf)
         {
             if (Input.GetMouseButtonDown(0)) //Destroy
+            {
+                int slotindex = 0;
+                foreach (UIItemSlots s in toolbar.slots)
+                {
+                    if (!s.itemslot.HasItem)
+                    {
+                        toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(world.getChunkFromvector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id, 1));
+                        break;
+                    }
+                    if (s.itemslot.stack.ID == world.getChunkFromvector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id)
+                    {
+                        toolbar.slots[slotindex].itemslot.Add(1);
+                        break;
+                    }
+                    else
+                        slotindex++;
+                }
+
                 world.getChunkFromvector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+            }
 
             if (Input.GetMouseButtonDown(1)) //Place
             {
