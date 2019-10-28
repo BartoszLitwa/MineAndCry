@@ -7,7 +7,7 @@ public class World : MonoBehaviour
 {
     public Settings settings;
 
-    public BiomeAttributes Biome;
+    public BiomeAttributes[] Biomes;
 
     public Transform player;
     public Vector3 spawnPosition;
@@ -318,6 +318,8 @@ public class World : MonoBehaviour
         }
     }
 
+    public int solidGroundHeight = 42;
+
     public byte GetVoxel(Vector3 pos)
     {
         //Immutable Pass
@@ -329,14 +331,45 @@ public class World : MonoBehaviour
         if (yPos == 0) //Bottom of the chunk
             return (byte)VoxelData.BlockTypes.Bedrock;
 
+        //Biome Selection Pass
+        float sumOffheights = 0f;
+        int count = 0;
+        float strongestWeight = 0f;
+        int strongestWeightIndex = 0;
+        Vector2 Pos2 = new Vector2(pos.x, pos.z);
+
+        for (int b = 0; b < Biomes.Length; b++)
+        {
+            float weight = PerlinNoise.Get2DPerlin(Pos2, Biomes[b].offset, Biomes[b].scale);
+
+            if(weight > strongestWeight) //Sets the highest wieght
+            {
+                strongestWeight = weight;
+                strongestWeightIndex = b;
+            }
+
+            //get the height of current biome
+            float height = Biomes[b].terrainHeight * PerlinNoise.Get2DPerlin(Pos2, 0, Biomes[b].terrainScale) * weight;
+
+            if(height > 0)
+            {
+                sumOffheights += height;
+                count++;
+            }
+        }
+
+        BiomeAttributes biome = Biomes[strongestWeightIndex];
+        sumOffheights /= count;
+
+        int TerrainHeight = Mathf.FloorToInt(sumOffheights + solidGroundHeight);
+
         //Get2DPerlin return values from 0 to 1 so i need to * it by chunkheight to get real heght
-        int TerrainHeight = Mathf.FloorToInt(PerlinNoise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, Biome.terrainScale) * Biome.terrainHeight) + Biome.solidGroundHeight;
         byte voxelValue = 0;
 
         if (yPos == TerrainHeight)
-            voxelValue = (byte)VoxelData.BlockTypes.Grass;
+            voxelValue = biome.surfaceBlock;
         else if (yPos < TerrainHeight && yPos > TerrainHeight - 4)
-            voxelValue = (byte)VoxelData.BlockTypes.Dirt;
+            voxelValue = biome.subSurfaceBlock;
         else if (yPos <= TerrainHeight - 4)
             voxelValue = (byte)VoxelData.BlockTypes.Stone;
         else
@@ -345,7 +378,7 @@ public class World : MonoBehaviour
         //Second Pass
         if (voxelValue == (byte)VoxelData.BlockTypes.Stone) //To generate some type of caves in stone
         {
-            foreach(Lode lode in Biome.lode)
+            foreach(Lode lode in biome.lode)
             {
                 if (yPos >= lode.minHeight && yPos <= lode.maxheight)
                     if (PerlinNoise.Get3DPerlin(pos, lode.noiseOffset, lode.scale, lode.threshold))
@@ -353,15 +386,15 @@ public class World : MonoBehaviour
             }
         }
 
-        //Tree Pass
-        if(yPos == TerrainHeight)
+        //Flora Pass
+        if(yPos == TerrainHeight && biome.placeMajorFlora)
         {
-            if (PerlinNoise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, Biome.treeZoneScale) > Biome.treeZoneThreshold)
+            if (PerlinNoise.Get2DPerlin(Pos2, 0, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
             {
-                if (PerlinNoise.Get2DPerlin(new Vector2(pos.x, pos.z), 0, Biome.treePlacementScale) > Biome.treePlacementThreshold)
+                if (PerlinNoise.Get2DPerlin(Pos2, 0, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
                 {
-                    modifications.Enqueue(Structure.MakeTree(pos, Biome.minTreeHeight, Biome.maxTreeHeight));
-                    voxelValue = (byte)VoxelData.BlockTypes.Grass;
+                    modifications.Enqueue(Structure.GenerateMajorFlora((Structure.StructureType)biome.majorFloraStructure, pos, biome.minHeight, biome.maxHeight));
+                    voxelValue = biome.surfaceBlock;
                 }
             }
         }
@@ -458,6 +491,7 @@ public class Settings
     [Header("World Generation")]
     public int seed;
     public int WorldSizeInChunks;
+    public bool enableChunkLoadAnimation;
 
     [Header("Controls")]
     [Range(0.1f, 10f)]

@@ -6,12 +6,12 @@ public static class VoxelData
 {
     public static readonly int ChunkWidth = 16; //Chunk size
     public static readonly int ChunkHeight = 128;
-    public static readonly int WorldSizeInChunks = 100;
+    public static readonly int WorldSizeInChunks = 110;
 
     //Lighting Values
     public static float minLightlevel = 0.15f;
     public static float maxLightLevel = 0.8f;
-    public static float lightFallOff = 0.08f;
+    public static float lightFallOff = 0.16f;
 
     public static int WorldSizeInVoxels
     {
@@ -28,7 +28,9 @@ public static class VoxelData
         get{ return 1f / (float)TextureAtlasSizeInBlocks; }
     }
 
-    public enum BlockTypes { Air, Bedrock, Grass, Stone, Dirt, Sand, OakWood, Cobble, Glass, Brick, Planks, Leaves};
+    public enum BlockTypes { Air, Bedrock, Grass, Stone, Dirt, Sand, OakWood, Cobble, Glass, Brick, Planks, Leaves, Sandstone, Cactus};
+
+    public enum Biomes { GrassLands, Desert, Forest};
 
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new Vector3(0.0f, 0.0f, 0.0f), //0

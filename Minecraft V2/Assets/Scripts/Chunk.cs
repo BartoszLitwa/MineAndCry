@@ -237,10 +237,14 @@ public class Chunk
         }
 
         isVoxelMapPopulated = true;
+
         lock (world.ChunkUpdateThreadLock)
         {
             world.chunksToUpdate.Add(this);
         }
+
+        if(world.settings.enableChunkLoadAnimation)
+            chunkObject.AddComponent<ChunkLoadAnimation>();
     }
 
     void UpdateMeshdata(Vector3 pos)
@@ -276,12 +280,12 @@ public class Chunk
 
                 if (!world.blocktypes[neighbour.id].renderNeighbourFaces)
                 {
-                triangles.Add(VertexIndex);
-                triangles.Add(VertexIndex + 1);
-                triangles.Add(VertexIndex + 2);
-                triangles.Add(VertexIndex + 2);
-                triangles.Add(VertexIndex + 1);
-                triangles.Add(VertexIndex + 3);
+                    triangles.Add(VertexIndex);
+                    triangles.Add(VertexIndex + 1);
+                    triangles.Add(VertexIndex + 2);
+                    triangles.Add(VertexIndex + 2);
+                    triangles.Add(VertexIndex + 1);
+                    triangles.Add(VertexIndex + 3);
                 }
                 else
                 {

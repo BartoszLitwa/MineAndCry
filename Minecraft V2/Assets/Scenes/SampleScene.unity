@@ -1335,7 +1335,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8, z: 0}
+  m_LocalPosition: {x: 0, y: 1.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1823657083}
@@ -1867,8 +1867,13 @@ MonoBehaviour:
     viewDistance: 5
     enableThreading: 1
     seed: 0
+    WorldSizeInChunks: 0
+    enableChunkLoadAnimation: 0
     mouseSensitivity: 1
-  Biome: {fileID: 11400000, guid: 843fb84a9e2bdf142bb352ba8caa2e02, type: 2}
+  Biomes:
+  - {fileID: 11400000, guid: 843fb84a9e2bdf142bb352ba8caa2e02, type: 2}
+  - {fileID: 11400000, guid: f50318b4bf5632e419ec1d2a18a0fe9a, type: 2}
+  - {fileID: 11400000, guid: b5931527da743a1448ae311cd29251f2, type: 2}
   player: {fileID: 1823657083}
   spawnPosition: {x: 0, y: 0, z: 0}
   globalLightLevel: 0.95
@@ -2009,9 +2014,32 @@ MonoBehaviour:
     bottomFacetexture: 52
     leftFacetexture: 52
     rightFacetexture: 52
+  - BlockName: Sandstone
+    IsSolid: 1
+    renderNeighbourFaces: 0
+    transparency: 0
+    icon: {fileID: 5679390536090785944, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
+    backFacetexture: 192
+    frontFacetexture: 192
+    topFacetexture: 176
+    bottomFacetexture: 176
+    leftFacetexture: 192
+    rightFacetexture: 192
+  - BlockName: Cactus
+    IsSolid: 1
+    renderNeighbourFaces: 0
+    transparency: 0
+    icon: {fileID: 5679390536090785944, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
+    backFacetexture: 70
+    frontFacetexture: 70
+    topFacetexture: 69
+    bottomFacetexture: 71
+    leftFacetexture: 70
+    rightFacetexture: 70
   debugScreen: {fileID: 1867516049}
   creativeInventoryWindow: {fileID: 217213124}
   cursorSlot: {fileID: 413251129}
+  solidGroundHeight: 42
 --- !u!1 &1640825206
 GameObject:
   m_ObjectHideFlags: 0

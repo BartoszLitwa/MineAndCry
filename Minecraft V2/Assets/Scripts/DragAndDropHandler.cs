@@ -77,12 +77,20 @@ public class DragAndDropHandler : MonoBehaviour
             }
             else if (cursorSlot.itemslot.stack.ID == clickedSlot.itemslot.stack.ID)//If both has the same items
             {
+                int oldamount = clickedSlot.itemslot.stack.amount;
                 clickedSlot.itemslot.stack.amount += cursorSlot.itemslot.stack.amount;
                 if (clickedSlot.itemslot.stack.amount > 64) //If after adding items is more than 64(stack size)
+                {
+                    cursorItemSlot.stack.amount = clickedSlot.itemslot.stack.amount - cursorItemSlot.stack.amount;
                     clickedSlot.itemslot.stack.amount = 64;
+                }
+                else
+                {
+                    cursorSlot.itemslot.TakeAll();
+                }
 
                 clickedSlot.UpdateSlot();
-                cursorSlot.itemslot.TakeAll();
+                cursorSlot.UpdateSlot();
             }
         }
     }

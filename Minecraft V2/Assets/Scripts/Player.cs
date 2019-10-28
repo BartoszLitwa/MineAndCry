@@ -25,13 +25,13 @@ public class Player : MonoBehaviour
     public float sprintSpeed = 6f;
     public float jumpForce = 5;
 
-    public float playerWidth = 0.15f;
+    public float playerWidth = 0.0f;
     public float boundsTolerance = 0.1f;
 
     public Transform highlightBlock;
     public Transform placeBlock;
     public float checkIncrement = 0.1f;
-    public float reach = 8f;
+    public float reach = 6f;
     public ToolBar toolbar;
 
 
@@ -63,13 +63,17 @@ public class Player : MonoBehaviour
         {  
             if (jumpRequest)
                 Jump();
-
-            transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity);
-            cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity);
+        }
+        else
+        {
+            mouseHorizontal = 0;
+            mouseVertical = 0;
         }
 
         CalcualteVelocity();
 
+        transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity);
+        cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity);
         transform.Translate(velocity, Space.World);
     }
 
@@ -135,7 +139,7 @@ public class Player : MonoBehaviour
                         toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(world.getChunkFromvector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id, 1));
                         break;
                     }
-                    if (s.itemslot.stack.ID == world.getChunkFromvector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id)
+                    if (s.itemslot.stack.ID == world.getChunkFromvector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id && s.itemslot.stack.amount < 64)
                     {
                         toolbar.slots[slotindex].itemslot.Add(1);
                         break;
@@ -185,10 +189,10 @@ public class Player : MonoBehaviour
 
     private float checkDownSpeed(float downSpeed)
     {
-        if(world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-           world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z - playerWidth)) ||
-           world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)) ||
-           world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + downSpeed, transform.position.z + playerWidth)))
+        if(world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + downSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
+           world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + downSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
+           world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + downSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))) ||
+           world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + downSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))))
         {
             isGrounded = true;
             return 0;
@@ -202,10 +206,10 @@ public class Player : MonoBehaviour
 
     private float checkUpSpeed(float upSpeed)
     {
-        if (world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z - playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x + playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)) ||
-            world.CheckForVoxel(new Vector3(transform.position.x - playerWidth, transform.position.y + 2f + upSpeed, transform.position.z + playerWidth)))
+        if (world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
+            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
+            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))) ||
+            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))))
         {
             return 0;
         }
