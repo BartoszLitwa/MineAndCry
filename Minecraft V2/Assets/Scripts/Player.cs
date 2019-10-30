@@ -153,9 +153,11 @@ public class Player : MonoBehaviour
 
             if (Input.GetMouseButtonDown(1)) //Place
             {
-                if(toolbar.slots[toolbar.slotIndex].HasItem)
-                world.getChunkFromvector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID);
-                toolbar.slots[toolbar.slotIndex].itemslot.Take(1);
+                if (toolbar.slots[toolbar.slotIndex].HasItem)
+                {
+                    world.getChunkFromvector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID);
+                    toolbar.slots[toolbar.slotIndex].itemslot.Take(1);
+                }
             }
         }
     }

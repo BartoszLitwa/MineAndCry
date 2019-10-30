@@ -25,7 +25,7 @@ public class DragAndDropHandler : MonoBehaviour
     {
         if (!world.inUI)
         {
-            if(cursorSlot.itemslot.stack != null)
+            if(cursorSlot.itemslot != null && cursorSlot.itemslot.stack != null)
                 cursorSlot.itemslot.TakeAll();
 
             return;

@@ -5,8 +5,8 @@ using System.IO;
 
 public class World : MonoBehaviour
 {
-    public Settings settings;
-
+    public Settings settings = new Settings();
+    
     public BiomeAttributes[] Biomes;
 
     public Transform player;
@@ -43,13 +43,10 @@ public class World : MonoBehaviour
 
     private void Start()
     {
-        //string jsonExport = JsonUtility.ToJson(settings);
-        //File.WriteAllText(Application.dataPath + "/Settings.cfg", jsonExport);
+        Random.InitState(settings.seed);
 
         string jsonImport = File.ReadAllText(Application.dataPath + "/Settings.cfg");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
-
-        Random.InitState(settings.seed);
 
         Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightlevel);
         Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
@@ -476,24 +473,4 @@ public class VoxelMod
         position = new Vector3();
         ID = 0;
     }
-}
-
-[System.Serializable] //It needs to be serializable to see it in unity
-public class Settings
-{
-    [Header("Game Data")]
-    public string version;
-
-    [Header("Performance")]
-    public int viewDistance;
-    public bool enableThreading;
-
-    [Header("World Generation")]
-    public int seed;
-    public int WorldSizeInChunks;
-    public bool enableChunkLoadAnimation;
-
-    [Header("Controls")]
-    [Range(0.1f, 10f)]
-    public float mouseSensitivity;
 }

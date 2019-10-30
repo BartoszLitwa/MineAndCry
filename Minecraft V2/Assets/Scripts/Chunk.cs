@@ -375,16 +375,25 @@ public class VoxelState
 {
     public byte id;
     public float globalLightPercent;
+    public VoxelData.Biomes Biome;
 
     public VoxelState()
     {
         id = 0;
         globalLightPercent = 0f; //Dark block
+        Biome = VoxelData.Biomes.GrassLands;
     }
 
     public VoxelState(byte _id)
     {
         id = _id;
         globalLightPercent = 0f; //Dark block
+    }
+
+    public VoxelState(byte _id, VoxelData.Biomes _biome)
+    {
+        id = _id;
+        globalLightPercent = 0f; //Dark block
+        Biome = _biome;
     }
 }

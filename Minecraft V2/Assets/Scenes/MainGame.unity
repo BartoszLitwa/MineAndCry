@@ -2027,7 +2027,7 @@ MonoBehaviour:
     rightFacetexture: 192
   - BlockName: Cactus
     IsSolid: 1
-    renderNeighbourFaces: 0
+    renderNeighbourFaces: 1
     transparency: 0
     icon: {fileID: 5679390536090785944, guid: 30e6aa5dc2fba1241b76ed95c1a4b126, type: 3}
     backFacetexture: 70
@@ -2247,7 +2247,7 @@ GameObject:
   - component: {fileID: 1823657084}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
