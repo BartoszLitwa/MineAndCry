@@ -60,7 +60,7 @@ public class MenuManager : MonoBehaviour
         settings = JsonUtility.FromJson<Settings>(jsonImport);
     }
 
-    public void StartGameButton(string sceneName)
+    public void LoadSceneButton(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
     }
