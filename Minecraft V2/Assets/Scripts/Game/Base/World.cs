@@ -61,7 +61,7 @@ public class World : MonoBehaviour
 
         spawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f, VoxelData.ChunkHeight - 50f, (VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f);
         GenerateWorld();
-        player.position = spawnPosition;
+        //player.position = spawnPosition;
         playerLastCoord = GetChunkCoordFromvector3(player.position);
 
     }
@@ -131,10 +131,11 @@ public class World : MonoBehaviour
     void UpdateChunks()
     {
         int index = 0;
+        bool updated = false;
 
         lock (ChunkUpdateThreadLock)
         {
-            while (index < chunksToUpdate.Count - 1)
+            while (!updated && index < chunksToUpdate.Count - 1)
             {
                 if (chunksToUpdate[index].isEditable)
                 {
@@ -144,8 +145,10 @@ public class World : MonoBehaviour
                         ActiveChunks.Add(chunksToUpdate[index].coord);
 
                     chunksToUpdate.RemoveAt(index);
+
+                    updated = true;
                 }
-                else
+                //else
                     index++;
             }
         }
@@ -205,7 +208,8 @@ public class World : MonoBehaviour
         foreach(ChunkCord c in ActiveChunks)
         {
             if (!chunks[c.x, c.z].IsActive)
-                chunks[c.x, c.z].IsActive = false;
+                ActiveChunks.Remove(c);
+                //chunks[c.x, c.z].IsActive = false;
         }
     }
 

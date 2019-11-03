@@ -11,7 +11,7 @@ public class RoomItem : MonoBehaviour
     [SerializeField] private Text PlayersText = null;
     [SerializeField] private Button ButtonRoom = null;
 
-    public int room;
+    public string room;
     public string Hostname;
     public int curPlayers;
     public int MaxPlayers = 2;
@@ -23,10 +23,10 @@ public class RoomItem : MonoBehaviour
 
     void ButtonClicked()
     {
-        Debug.Log("Room" + room + "clicked!");
+        Debug.Log("Room " + room + " clicked!");
     }
 
-    public RoomItem(int _room, string _Hostname, int _curPlayers, int _MaxPlayers)
+    public RoomItem(string _room, string _Hostname, int _curPlayers, int _MaxPlayers)
     {
         room = _room;
         Hostname = _Hostname;
@@ -36,7 +36,7 @@ public class RoomItem : MonoBehaviour
 
     public void InitNames()
     {
-        roomText.text = "Room " + room;
+        roomText.text = room;
         DescText.text = "Created By " + Hostname;
         PlayersText.text = curPlayers + " / " + MaxPlayers;
     }

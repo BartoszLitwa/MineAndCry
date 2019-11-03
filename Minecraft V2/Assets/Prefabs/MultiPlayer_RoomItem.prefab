@@ -227,10 +227,10 @@ MonoBehaviour:
   DescText: {fileID: 3428399789015179966}
   PlayersText: {fileID: 3428399790158797659}
   ButtonRoom: {fileID: 3428399788853583795}
-  room: 0
+  room: 19
   Hostname: CRNYY
-  curPlayers: 0
-  MaxPlayers: 0
+  curPlayers: 19
+  MaxPlayers: 10
 --- !u!1 &3428399789015179964
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,8 +265,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 280, y: 0}
-  m_SizeDelta: {x: 600, y: 80}
+  m_AnchoredPosition: {x: 440, y: 0}
+  m_SizeDelta: {x: 440, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &3428399789015179967
 CanvasRenderer:
@@ -309,9 +309,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Created by PLAYER
-
-'
+  m_Text: Created By CRNYY
 --- !u!1 &3428399789533169673
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,7 +426,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 20, y: 0}
-  m_SizeDelta: {x: 240, y: 80}
+  m_SizeDelta: {x: 400, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &3428399789737599810
 CanvasRenderer:
@@ -471,9 +469,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: ' Room 10
-
-'
+  m_Text: Room 19
 --- !u!1 &3428399790158797657
 GameObject:
   m_ObjectHideFlags: 0
@@ -552,6 +548,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '2 / 10
-
-'
+  m_Text: 19 / 10
