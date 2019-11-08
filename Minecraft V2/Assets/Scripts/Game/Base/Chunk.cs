@@ -88,7 +88,7 @@ public class Chunk
             for (int z = 0; z < VoxelData.ChunkWidth; z++) //Square loop y
             {
                 float lightRay = 1f;
-                for(int y = VoxelData.ChunkHeight - 1; y >= 0; y--) //Lopp down(from top to bootom
+                for(int y = VoxelData.ChunkHeight - 1; y >= 0; y--) //Lopp down(from top to bootom)
                 {
                     VoxelState thisvoxel = voxelMap[x, y, z];
 

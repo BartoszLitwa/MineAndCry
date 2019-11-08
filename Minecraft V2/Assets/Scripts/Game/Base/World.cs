@@ -40,6 +40,7 @@ public class World : MonoBehaviour
 
     Thread ChunkUpdateThread;
     public object ChunkUpdateThreadLock = new object();
+    public Sprite blockIconSprites;
 
     private void Start()
     {
@@ -47,6 +48,9 @@ public class World : MonoBehaviour
 
         string jsonImport = File.ReadAllText(Application.dataPath + "/Settings.cfg");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
+
+        SaveBlocktypesToFile();
+        LoadBlocktypesToGame();
 
         Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightlevel);
         Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
@@ -63,7 +67,30 @@ public class World : MonoBehaviour
         GenerateWorld();
         //player.position = spawnPosition;
         playerLastCoord = GetChunkCoordFromvector3(player.position);
+    }
 
+    void SaveBlocktypesToFile()
+    {
+        string Blocks = "";
+        for (int i = 0; i < blocktypes.Length; i++)
+        {
+            Blocks += JsonUtility.ToJson(blocktypes[i], true);
+            if (i != blocktypes.Length - 1) //Checks if it isnt the last one
+                Blocks += "||";
+        }
+         
+        File.WriteAllText(Application.dataPath + "/Blocks.txt", Blocks);
+    }
+
+    void LoadBlocktypesToGame()
+    {
+        string loadstring = File.ReadAllText(Application.dataPath + "/Blocks.txt");
+        string[] blockstring = loadstring.Split("||".ToCharArray());
+        for (int i = 1; i < blocktypes.Length; i = i + 2) //It reads the correct one and then the object of it so we have to add 2 every loop
+        {
+            Debug.Log(blockstring[i]);
+            JsonUtility.FromJsonOverwrite(blockstring[i], blocktypes[i]);
+        }
     }
 
     private void Update()
@@ -73,7 +100,6 @@ public class World : MonoBehaviour
         if (!playerChunkCoord.Equals(playerLastCoord))
         {
             CheckViewDistance();
-            DisableInActiveChunks();
         }
 
         if (chunksToCreate.Count > 0)
@@ -148,7 +174,7 @@ public class World : MonoBehaviour
 
                     updated = true;
                 }
-                //else
+                else
                     index++;
             }
         }
@@ -189,13 +215,16 @@ public class World : MonoBehaviour
                     VoxelMod v = queue.Dequeue();
                     ChunkCord c = GetChunkCoordFromvector3(v.position);
 
-                    if (chunks[c.x, c.z] == null)
+                    if (IsChunkInViewDistance(c))
                     {
-                        chunks[c.x, c.z] = new Chunk(c, this);
-                        chunksToCreate.Add(c);
-                    }
+                        if (chunks[c.x, c.z] == null)
+                        {
+                            chunks[c.x, c.z] = new Chunk(c, this);
+                            chunksToCreate.Add(c);
+                        }
 
-                    chunks[c.x, c.z].modifications.Enqueue(v);
+                        chunks[c.x, c.z].modifications.Enqueue(v); //Adds modifications to new chunk
+                    }
                 }
             }
         }
@@ -203,14 +232,13 @@ public class World : MonoBehaviour
         ApplyingModifications = false;
     }
 
-    void DisableInActiveChunks()
+    bool IsChunkInViewDistance(ChunkCord coord)
     {
-        foreach(ChunkCord c in ActiveChunks)
-        {
-            if (!chunks[c.x, c.z].IsActive)
-                ActiveChunks.Remove(c);
-                //chunks[c.x, c.z].IsActive = false;
-        }
+        if (coord.x >= playerChunkCoord.x - settings.viewDistance && coord.x <= playerChunkCoord.x + settings.viewDistance &&
+            coord.z >= playerChunkCoord.z - settings.viewDistance && coord.z <= playerChunkCoord.z + settings.viewDistance)
+            return true;
+        else
+            return false;
     }
 
     ChunkCord GetChunkCoordFromvector3(Vector3 pos)
@@ -426,6 +454,7 @@ public class Blocktype
     public string BlockName;
     public bool IsSolid; //Is phisical block unlike air
     public bool renderNeighbourFaces; //Can see thru a block
+    public bool hasGravity;
     public float transparency;
     public Sprite icon;
 
@@ -436,6 +465,22 @@ public class Blocktype
     public int bottomFacetexture;
     public int leftFacetexture;
     public int rightFacetexture;
+
+    public Blocktype(Blocktype b)
+    {
+        BlockName = b.BlockName;
+        IsSolid = b.IsSolid;
+        renderNeighbourFaces = b.renderNeighbourFaces;
+        hasGravity = b.hasGravity;
+        transparency = b.transparency;
+        //icon = b.icon;
+        backFacetexture   = b.backFacetexture;
+        frontFacetexture  = b.frontFacetexture;
+        topFacetexture    = b.topFacetexture;
+        bottomFacetexture = b.bottomFacetexture;
+        leftFacetexture   = b.leftFacetexture;
+        rightFacetexture  = b.rightFacetexture;
+    }
 
     //Back Front Top Bottom Left Right
     public int GetTextureID(int faceIndex)

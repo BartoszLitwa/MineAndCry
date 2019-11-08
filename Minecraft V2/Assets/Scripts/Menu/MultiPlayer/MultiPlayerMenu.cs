@@ -24,6 +24,8 @@ public class MultiPlayerMenu : MonoBehaviourPunCallbacks
     private const string GameVersion = "0.1";
     private const int MaxPlayersPerRoom = 2;
 
+    private List<GameObject> roomListing = new List<GameObject>();
+
     private void Start()
     {
         panelCreateRoom.SetActive(false);
@@ -86,17 +88,31 @@ public class MultiPlayerMenu : MonoBehaviourPunCallbacks
         Vector3 pos = UIRoomsConatiner.transform.position;
         foreach (RoomInfo room in roomList)
         {
-            GameObject Room = Instantiate(RoomPrefab, new Vector3(pos.x, pos.y + 5000 - index * 105, pos.z), Quaternion.identity, UIRoomsConatiner.transform);
-            if (room == null)
-                continue;
+            if (room.RemovedFromList)
+            {
+                int inList = roomListing.FindIndex(x => x.GetComponent<RoomItem>().room == room.Name); //Searches for the room with the same index
+                if (inList != -1)
+                {
+                    //Destroy(roomListing[inList]);
+                    roomListing.RemoveAt(inList);
+                }
+            }
+            else
+            {
+                GameObject Room = Instantiate(RoomPrefab, new Vector3(pos.x, pos.y + 4860 - index * 105, pos.z), Quaternion.identity, UIRoomsConatiner.transform);
+                if (room == null)
+                    continue;
 
-            Room.name = "Room " + room.Name;
-            RoomItem item = Room.GetComponent<RoomItem>();
-            item.room = room.Name;
-            item.Hostname = room.masterClientId.ToString();
-            item.curPlayers = room.PlayerCount;
-            item.MaxPlayers = room.MaxPlayers;
-            item.InitNames();
+                Room.name = "Room " + room.Name;
+                RoomItem item = Room.GetComponent<RoomItem>();
+                item.room = room.Name;
+                item.Hostname = room.masterClientId.ToString();
+                item.curPlayers = room.PlayerCount;
+                item.MaxPlayers = room.MaxPlayers;
+                item.InitNames();
+
+                roomListing.Add(Room);
+            }
 
             index++;
         }

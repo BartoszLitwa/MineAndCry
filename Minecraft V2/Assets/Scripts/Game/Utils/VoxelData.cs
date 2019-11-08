@@ -25,12 +25,14 @@ public static class VoxelData
 
     public static readonly int TextureAtlasSizeInBlocks = 16;
     public static float NormalizedBlockTextureSize {
-        get{ return 1f / (float)TextureAtlasSizeInBlocks; }
+        get{ return 1f / TextureAtlasSizeInBlocks; }
     }
 
     public enum BlockTypes { Air, Bedrock, Grass, Stone, Dirt, Sand, OakWood, Cobble, Glass, Brick, Planks, Leaves, Sandstone, Cactus};
 
     public enum Biomes { GrassLands, Desert, Forest};
+
+    public enum GameModes { Creative, Survival };
 
     public static readonly Vector3[] voxelVerts = new Vector3[8] {
         new Vector3(0.0f, 0.0f, 0.0f), //0
