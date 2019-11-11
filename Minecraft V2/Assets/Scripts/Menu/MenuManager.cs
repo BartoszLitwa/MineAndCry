@@ -14,15 +14,20 @@ public class MenuManager : MonoBehaviour
     string SettingsPath = "/Settings.cfg";
     int index = 0;
 
+    private void Start()
+    {
+        LoadSettingsToMenu();
+    }
+
     private void Update()
     {
-        if (index > 100)
-        {
-            LoadSettingsToMenu();
-            index = -1;
-        }
-        else if(index != -1)
-            index++;
+        //if (index > 100)
+        //{
+        //    LoadSettingsToMenu();
+        //    index = -1;
+        //}
+        //else if(index != -1)
+        //    index++;
     }
 
     public void SettingsChanged()

@@ -17,7 +17,16 @@ public class WorldItem : MonoBehaviour
 
     public void ButtonClicked()
     {
+        if(Helpers.LastClickedWorldItem == WorldName)
+        {
+            Helpers.LastClickedWorldItem = "";
+            Helpers.CurrentWorldname = WorldName;
+            Helpers.DoesThisWorldNeedLoad = true;
+            Helpers.LoadScene("MainGame");
+        }
+
         Debug.Log("World " + WorldName + " clicked!");
+        Helpers.LastClickedWorldItem = WorldName;
     }
 
     public WorldItem(string _WorldName, string _LastPlayed, int _GameMode)
@@ -31,6 +40,10 @@ public class WorldItem : MonoBehaviour
     {
         WorldText.text = WorldName;
         LastplayedText.text = LastPlayed;
+
+        if (GameMode > 1 || GameMode < 0)
+            GameMode = 0;
+
         GamemodeText.text = ((VoxelData.GameModes)GameMode).ToString();
     }
 }

@@ -34,6 +34,9 @@ public class Player : MonoBehaviour
     public float reach = 6f;
     public ToolBar toolbar;
 
+    public List<BlocksToSave> PlayersBlocksPlaced = new List<BlocksToSave>();
+    public VoxelData.GameModes GameMode;
+    public bool AllowCheats;
 
     private void Start()
     {
@@ -41,6 +44,7 @@ public class Player : MonoBehaviour
         world = GameObject.Find("World").GetComponent<World>();
 
         world.inUI = false;
+        world.inPauseScreen = false;
     }
 
     private void Update()
@@ -50,7 +54,7 @@ public class Player : MonoBehaviour
             world.inUI = !world.inUI;
         }
 
-        if (!world.inUI)
+        if (!world.inUI && !world.inPauseScreen)
         {
             GetPlayerInput();
             placeCursorBlocks();
@@ -116,8 +120,8 @@ public class Player : MonoBehaviour
 
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
-        mouseHorizontal = Input.GetAxis("Mouse X");
-        mouseVertical = Input.GetAxis("Mouse Y");
+        mouseHorizontal = Input.GetAxis("Mouse X") / Time.fixedDeltaTime;
+        mouseVertical = Input.GetAxis("Mouse Y") / Time.fixedDeltaTime;
 
         if (Input.GetButtonDown("Sprint")) //Pressed
             isSprinting = true;
@@ -136,10 +140,10 @@ public class Player : MonoBehaviour
                 {
                     if (!s.itemslot.HasItem)
                     {
-                        toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(world.getChunkFromvector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id, 1));
+                        toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(world.getChunkFromVector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id, 1));
                         break;
                     }
-                    if (s.itemslot.stack.ID == world.getChunkFromvector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id && s.itemslot.stack.amount < 64)
+                    if (s.itemslot.stack.ID == world.getChunkFromVector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id && s.itemslot.stack.amount < 64)
                     {
                         toolbar.slots[slotindex].itemslot.Add(1);
                         break;
@@ -148,18 +152,43 @@ public class Player : MonoBehaviour
                         slotindex++;
                 }
 
-                world.getChunkFromvector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+                world.getChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+
+                Vector3Int BlockPos = Helpers.Vector3ToVector3Int(highlightBlock.position);
+                CheckIfBlockWasPlacedBefore(BlockPos);
+                PlayersBlocksPlaced.Add(new BlocksToSave(BlockPos, 0));
             }
 
             if (Input.GetMouseButtonDown(1)) //Place
             {
                 if (toolbar.slots[toolbar.slotIndex].HasItem)
                 {
-                    world.getChunkFromvector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID);
+                    world.getChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID);
                     toolbar.slots[toolbar.slotIndex].itemslot.Take(1);
+
+                    Vector3Int BlockPos = Helpers.Vector3ToVector3Int(placeBlock.position);
+                    CheckIfBlockWasPlacedBefore(BlockPos);
+                    PlayersBlocksPlaced.Add(new BlocksToSave(BlockPos, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID));
                 }
             }
         }
+    }
+
+    bool CheckIfBlockWasPlacedBefore(Vector3Int pos)
+    {
+        bool placedBefore = false;
+
+        foreach(BlocksToSave b in PlayersBlocksPlaced)
+        {
+            if (b.pos == pos)
+            {
+                PlayersBlocksPlaced.Remove(b);
+                placedBefore = true;
+                break;
+            }    
+        }
+
+        return placedBefore;
     }
 
     private void placeCursorBlocks()
@@ -189,6 +218,7 @@ public class Player : MonoBehaviour
         placeBlock.gameObject.SetActive(false);
     }
 
+    #region SpeedChecks
     private float checkDownSpeed(float downSpeed)
     {
         if(world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + downSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
@@ -266,5 +296,18 @@ public class Player : MonoBehaviour
             else
                 return false;
         }
+    }
+    #endregion
+}
+
+public class BlocksToSave
+{
+    public Vector3Int pos;
+    public byte id; //If id == 0 block got removed
+
+    public BlocksToSave(Vector3Int _pos, byte _id)
+    {
+        pos = _pos;
+        id = _id;
     }
 }

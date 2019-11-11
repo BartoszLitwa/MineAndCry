@@ -194,7 +194,7 @@ public class Chunk
 
             if(!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                world.chunksToUpdate.Insert(0, world.getChunkFromvector3(thisVoxel + Position + VoxelData.faceCheks[f]));
+                world.chunksToUpdate.Insert(0, world.getChunkFromVector3(thisVoxel + Position + VoxelData.faceCheks[f]));
             }
         }
     }
@@ -375,13 +375,13 @@ public class VoxelState
 {
     public byte id;
     public float globalLightPercent;
-    public VoxelData.Biomes Biome;
+    //public VoxelData.Biomes Biome;
 
     public VoxelState()
     {
         id = 0;
         globalLightPercent = 0f; //Dark block
-        Biome = VoxelData.Biomes.GrassLands;
+        //Biome = VoxelData.Biomes.GrassLands;
     }
 
     public VoxelState(byte _id)
@@ -394,6 +394,6 @@ public class VoxelState
     {
         id = _id;
         globalLightPercent = 0f; //Dark block
-        Biome = _biome;
+        //Biome = _biome;
     }
 }

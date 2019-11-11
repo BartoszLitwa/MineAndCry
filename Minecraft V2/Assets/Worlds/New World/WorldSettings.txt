@@ -1,0 +1,1 @@
+Seed: 200 || GameMode: 0 || WorldName: New World || AllowCheats: True

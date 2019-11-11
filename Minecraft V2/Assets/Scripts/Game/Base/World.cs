@@ -2,10 +2,14 @@
 using System.Threading;
 using UnityEngine;
 using System.IO;
+using System;
 
 public class World : MonoBehaviour
 {
     public Settings settings = new Settings();
+    SaveManager saveManager = new SaveManager();
+    public string WorldName = "World";
+    public Player playerClass;
     
     public BiomeAttributes[] Biomes;
 
@@ -21,7 +25,7 @@ public class World : MonoBehaviour
     public Material transparentMaterial;
     public Blocktype[] blocktypes;
     public GameObject debugScreen;
-    Chunk[,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
+    public Chunk[,] chunks = new Chunk[VoxelData.WorldSizeInChunks, VoxelData.WorldSizeInChunks];
     List<ChunkCord> ActiveChunks = new List<ChunkCord>();
     public ChunkCord playerChunkCoord;
     ChunkCord playerLastCoord;
@@ -35,22 +39,32 @@ public class World : MonoBehaviour
     public Queue<Chunk> ChunksToDraw = new Queue<Chunk>();
 
     private bool _inUI = false;
+
+    [SerializeField] private GameObject PausePanel;
+    private bool _inPauseScreen = false;
+
     public GameObject creativeInventoryWindow;
     public GameObject cursorSlot;
 
     Thread ChunkUpdateThread;
     public object ChunkUpdateThreadLock = new object();
     public Sprite blockIconSprites;
+    string path = "";
 
     private void Start()
     {
-        Random.InitState(settings.seed);
+        Debug.Log("World Start Method");
+        path = Application.dataPath + "/Worlds/" + Helpers.CurrentWorldname + "/";
+        playerClass = GameObject.Find("Player").GetComponent<Player>();
+
+        Debug.Log(Helpers.CurrentWorldname);
 
         string jsonImport = File.ReadAllText(Application.dataPath + "/Settings.cfg");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
 
-        SaveBlocktypesToFile();
-        LoadBlocktypesToGame();
+        //SaveManager.GetWorldSettingsFromFile();
+
+        UnityEngine.Random.InitState(Helpers.CurrentSeed);
 
         Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightlevel);
         Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
@@ -69,30 +83,7 @@ public class World : MonoBehaviour
         playerLastCoord = GetChunkCoordFromvector3(player.position);
     }
 
-    void SaveBlocktypesToFile()
-    {
-        string Blocks = "";
-        for (int i = 0; i < blocktypes.Length; i++)
-        {
-            Blocks += JsonUtility.ToJson(blocktypes[i], true);
-            if (i != blocktypes.Length - 1) //Checks if it isnt the last one
-                Blocks += "||";
-        }
-         
-        File.WriteAllText(Application.dataPath + "/Blocks.txt", Blocks);
-    }
-
-    void LoadBlocktypesToGame()
-    {
-        string loadstring = File.ReadAllText(Application.dataPath + "/Blocks.txt");
-        string[] blockstring = loadstring.Split("||".ToCharArray());
-        for (int i = 1; i < blocktypes.Length; i = i + 2) //It reads the correct one and then the object of it so we have to add 2 every loop
-        {
-            Debug.Log(blockstring[i]);
-            JsonUtility.FromJsonOverwrite(blockstring[i], blocktypes[i]);
-        }
-    }
-
+    bool loaded = false;
     private void Update()
     {
         playerChunkCoord = GetChunkCoordFromvector3(player.position);
@@ -103,7 +94,19 @@ public class World : MonoBehaviour
         }
 
         if (chunksToCreate.Count > 0)
+        {
             CreateChunk();
+        }
+
+        if (!loaded)
+        {
+            if (Helpers.DoesThisWorldNeedLoad && chunksToCreate.Count == 0)
+            {
+                loaded = true;
+                SaveManager.LoadPlacedBlocksFromFile();
+                Helpers.DoesThisWorldNeedLoad = false;
+            }
+        }
 
         if (!settings.enableThreading)
         {
@@ -249,7 +252,7 @@ public class World : MonoBehaviour
         return new ChunkCord(x, z);
     }
 
-    public Chunk getChunkFromvector3(Vector3 pos)
+    public Chunk getChunkFromVector3(Vector3 pos)
     {
         int x = Mathf.FloorToInt(pos.x / VoxelData.ChunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.ChunkWidth);
@@ -343,6 +346,27 @@ public class World : MonoBehaviour
                 Cursor.visible = false;
                 creativeInventoryWindow.SetActive(false);
                 cursorSlot.SetActive(false);
+            }
+        }
+    }
+
+    public bool inPauseScreen
+    {
+        get { return _inPauseScreen; }
+        set
+        {
+            _inPauseScreen = value;
+            if (_inPauseScreen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                PausePanel.SetActive(true);
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                PausePanel.SetActive(false);
             }
         }
     }
