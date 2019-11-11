@@ -220,7 +220,10 @@ public class Chunk
         xCheck -= Mathf.FloorToInt(Position.x);
         zCheck -= Mathf.FloorToInt(Position.z);
 
-        return voxelMap[xCheck, yCheck, zCheck];
+        if (xCheck < VoxelData.ChunkWidth && zCheck < VoxelData.ChunkWidth && yCheck < VoxelData.ChunkHeight)
+            return voxelMap[xCheck, yCheck, zCheck];
+        else
+            return null;
     }
 
     void PopulateVoxelMap()

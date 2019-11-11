@@ -9,6 +9,7 @@ public class Helpers
     public static bool DoesThisWorldNeedLoad = false;
     public static string LastClickedWorldItem = "";
     public static int CurrentSeed = 0;
+    public static bool NeedReReadSettingsToGame = false;
 
     public static Vector3Int Vector3ToVector3Int(Vector3 pos)
     {

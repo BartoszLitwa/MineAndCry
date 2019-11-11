@@ -6,54 +6,71 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     public Slider mouseSensSlider;
+    public Text MouseSensText;
     public Slider viewDistanceSlider;
+    public Text viewDistanceText;
     public Toggle enableThreadingToggle;
     public Toggle chunkAnimToggle;
 
-    Settings settings;
-    string SettingsPath = "/Settings.cfg";
+    static Settings settings;
+
+    string SettingsPath = "/Settings.txt";
     int index = 0;
+    bool CanSaveChanges = false;
 
     private void Start()
     {
+        settings = new Settings();
         LoadSettingsToMenu();
+        CanSaveChanges = true;
     }
 
     private void Update()
     {
-        //if (index > 100)
-        //{
-        //    LoadSettingsToMenu();
-        //    index = -1;
-        //}
-        //else if(index != -1)
-        //    index++;
+
     }
 
     public void SettingsChanged()
     {
-        settings.mouseSensitivity = mouseSensSlider.value;
-        settings.viewDistance = (int)viewDistanceSlider.value;
+        if (!CanSaveChanges)
+            return;
+
+        settings.mouseSensitivity = Mathf.FloorToInt(mouseSensSlider.value);
+        settings.viewDistance = Mathf.FloorToInt(viewDistanceSlider.value);
         settings.enableChunkLoadAnimation = chunkAnimToggle.isOn;
         settings.enableThreading = enableThreadingToggle.isOn;
 
+        ChangeTextValues();
+
         SaveChangesToFile();
+
+        Helpers.NeedReReadSettingsToGame = true;
+    }
+
+    void ChangeTextValues()
+    {
+        MouseSensText.text = settings.mouseSensitivity.ToString();
+        viewDistanceText.text = settings.viewDistance.ToString();
     }
 
     void SaveChangesToFile()
     {
-        string jsonExport = JsonUtility.ToJson(settings);
+        Debug.Log("SaveChangesToFile");
+        string jsonExport = JsonUtility.ToJson(settings, true);
         File.WriteAllText(Application.dataPath + SettingsPath, jsonExport);
     }
 
     void LoadSettingsToMenu()
     {
+        Debug.Log("LoadSettingsToMenu");
         LoadSettingsFile();
+
         viewDistanceSlider.value = settings.viewDistance;
         mouseSensSlider.value = settings.mouseSensitivity;
-        
         chunkAnimToggle.isOn = settings.enableChunkLoadAnimation;
         enableThreadingToggle.isOn = settings.enableThreading;
+
+        ChangeTextValues();
     }
 
     void LoadSettingsFile()

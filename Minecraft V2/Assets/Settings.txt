@@ -1,0 +1,9 @@
+{
+    "version": "0.01",
+    "viewDistance": 7,
+    "enableThreading": true,
+    "enableChunkLoadAnimation": true,
+    "seed": 0,
+    "WorldSizeInChunks": 0,
+    "mouseSensitivity": 1.0
+}

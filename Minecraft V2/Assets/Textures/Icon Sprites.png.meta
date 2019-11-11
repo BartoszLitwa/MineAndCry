@@ -139,7 +139,7 @@ TextureImporter:
     second: Icon Sprites_44
   - first:
       213: -4017922161719298441
-    second: Icon Sprites_45
+    second: GrassPlantIcon
   - first:
       213: 7623598419024574435
     second: Icon Sprites_46
@@ -310,7 +310,7 @@ TextureImporter:
     second: Icon Sprites_101
   - first:
       213: 1934294484709083968
-    second: Icon Sprites_102
+    second: CraftingTableIcon
   - first:
       213: 9177992825337388801
     second: Icon Sprites_103
@@ -622,7 +622,7 @@ TextureImporter:
     second: Icon Sprites_205
   - first:
       213: -9204177707138718166
-    second: Icon Sprites_206
+    second: ChestIcon
   - first:
       213: -3614291932615427141
     second: Icon Sprites_207
@@ -2720,7 +2720,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Icon Sprites_45
+      name: GrassPlantIcon
       rect:
         serializedVersion: 2
         x: 416
@@ -3917,7 +3917,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Icon Sprites_102
+      name: CraftingTableIcon
       rect:
         serializedVersion: 2
         x: 192
@@ -6101,7 +6101,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Icon Sprites_206
+      name: ChestIcon
       rect:
         serializedVersion: 2
         x: 448

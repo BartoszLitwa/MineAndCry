@@ -208,4 +208,34 @@
     "bottomFacetexture": 71,
     "leftFacetexture": 70,
     "rightFacetexture": 70
+}||{
+    "BlockName": "CraftingTable",
+    "IsSolid": true,
+    "renderNeighbourFaces": false,
+    "hasGravity": false,
+    "transparency": 0.0,
+    "icon": {
+        "instanceID": 12096
+    },
+    "backFacetexture": 59,
+    "frontFacetexture": 59,
+    "topFacetexture": 43,
+    "bottomFacetexture": 43,
+    "leftFacetexture": 60,
+    "rightFacetexture": 60
+}||{
+    "BlockName": "Chest",
+    "IsSolid": true,
+    "renderNeighbourFaces": false,
+    "hasGravity": false,
+    "transparency": 0.0,
+    "icon": {
+        "instanceID": 12302
+    },
+    "backFacetexture": 26,
+    "frontFacetexture": 27,
+    "topFacetexture": 26,
+    "bottomFacetexture": 26,
+    "leftFacetexture": 26,
+    "rightFacetexture": 26
 }

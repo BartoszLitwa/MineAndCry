@@ -3,6 +3,7 @@ using System.Threading;
 using UnityEngine;
 using System.IO;
 using System;
+using UnityEngine.UI;
 
 public class World : MonoBehaviour
 {
@@ -51,18 +52,22 @@ public class World : MonoBehaviour
     public Sprite blockIconSprites;
     string path = "";
 
+    [SerializeField] private GameObject LoadingScreenPanel;
+    [SerializeField] private Text LoadingScreenText;
+    [SerializeField] private GameObject SettingsPauseScreenPanel;
+
     private void Start()
     {
+        LoadingScreenText.text = "Creating World...";
+        LoadingScreenPanel.SetActive(true);
+
         Debug.Log("World Start Method");
         path = Application.dataPath + "/Worlds/" + Helpers.CurrentWorldname + "/";
         playerClass = GameObject.Find("Player").GetComponent<Player>();
 
         Debug.Log(Helpers.CurrentWorldname);
 
-        string jsonImport = File.ReadAllText(Application.dataPath + "/Settings.cfg");
-        settings = JsonUtility.FromJson<Settings>(jsonImport);
-
-        //SaveManager.GetWorldSettingsFromFile();
+        ReadGameSettingsFromFile();
 
         UnityEngine.Random.InitState(Helpers.CurrentSeed);
 
@@ -103,8 +108,10 @@ public class World : MonoBehaviour
             if (Helpers.DoesThisWorldNeedLoad && chunksToCreate.Count == 0)
             {
                 loaded = true;
+                LoadingScreenText.text = "Loading World...";
                 SaveManager.LoadPlacedBlocksFromFile();
                 Helpers.DoesThisWorldNeedLoad = false;
+                TurnOffTheLoadingScreen();
             }
         }
 
@@ -125,6 +132,26 @@ public class World : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F3))
             debugScreen.SetActive(!debugScreen.activeSelf);
+
+        if (Helpers.NeedReReadSettingsToGame)
+        {
+            ReadGameSettingsFromFile();
+
+            CheckViewDistance();
+
+            Helpers.NeedReReadSettingsToGame = false;
+        }
+    }
+
+    void ReadGameSettingsFromFile()
+    {
+        string jsonImport = File.ReadAllText(Application.dataPath + "/Settings.txt");
+        settings = JsonUtility.FromJson<Settings>(jsonImport);
+    }
+
+    private void TurnOffTheLoadingScreen()
+    {
+        LoadingScreenPanel.SetActive(false);
     }
 
     public void SetGlobalLightValue()
@@ -309,7 +336,7 @@ public class World : MonoBehaviour
         if (!IsChunkInWorld(thisChunk) || pos.y < 0 || pos.y > VoxelData.ChunkHeight)
             return false;
 
-        if (chunks[thisChunk.x, thisChunk.z] != null && chunks[thisChunk.x, thisChunk.z].isEditable)
+        if (chunks[thisChunk.x, thisChunk.z] != null && chunks[thisChunk.x, thisChunk.z].isEditable && chunks[thisChunk.x, thisChunk.z].GetVoxelFromGlobalVector3(pos) != null)
             return blocktypes[chunks[thisChunk.x, thisChunk.z].GetVoxelFromGlobalVector3(pos).id].IsSolid;
 
         return blocktypes[GetVoxel(pos)].IsSolid;
@@ -367,6 +394,7 @@ public class World : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
                 PausePanel.SetActive(false);
+                SettingsPauseScreenPanel.SetActive(false);
             }
         }
     }

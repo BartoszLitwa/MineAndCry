@@ -12,6 +12,7 @@ public class SaveManager : MonoBehaviour
     static World world;
     static Player player;
     [SerializeField] private GameObject PausePanel;
+    [SerializeField] private Button SaveBtn;
     [SerializeField] private Button SaveAndExitBtn;
 
     static string path = "World path";
@@ -40,18 +41,28 @@ public class SaveManager : MonoBehaviour
     public static void LoadPlacedBlocksFromFile()
     {
         Debug.Log("Start LoadPlacedBlocksFromFile");
+        if(!File.Exists(path + "WorldSave.txt"))
+        {
+            Debug.Log("File doesnt exist: " + path + "WorldSave.txt");
+            return;
+        }
+
         string[] Input = File.ReadAllLines(path + "WorldSave.txt");
         foreach (string s in Input)
         {
             if(!string.IsNullOrEmpty(s))
                 player.PlayersBlocksPlaced.Add(JsonUtility.FromJson<BlocksToSave>(s));
         }
-        //player.PlayersBlocksPlaced = JsonUtility.FromJson<List<BlocksToSave>>(File.ReadAllText(path + "WorldSave.txt"));
 
         foreach (BlocksToSave b in player.PlayersBlocksPlaced)
         {
-            Debug.Log(b.id);
-            world.getChunkFromVector3(b.pos).EditVoxel(b.pos, b.id);
+            Chunk thisChunk = world.getChunkFromVector3(b.pos);
+            thisChunk.EditVoxel(b.pos, b.id);
+
+            if (!world.chunksToUpdate.Contains(thisChunk))
+            {
+                world.chunksToUpdate.Add(thisChunk);
+            }
         }
         Debug.Log("End LoadPlacedBlocksFromFile");
     }
@@ -84,7 +95,8 @@ public class SaveManager : MonoBehaviour
 
     private void OnDisable()
     {
-        SaveWorldThread.Abort();
+        if(SaveWorldThread != null && SaveWorldThread.IsAlive)
+            SaveWorldThread.Abort();
     }
 
     void ThreadedSave()
@@ -92,6 +104,7 @@ public class SaveManager : MonoBehaviour
         Debug.Log("SaveWorldToFile Start method");
         Debug.Log(player.PlayersBlocksPlaced.Count + 1);
         string[] voxels = new string[player.PlayersBlocksPlaced.Count + 1];
+        //voxels[0] = JsonUtility.ToJson(Helpers.Vector3ToVector3Int(world.player.position));
         int i = 0;
         foreach (BlocksToSave b in player.PlayersBlocksPlaced)
         {

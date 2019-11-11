@@ -76,8 +76,8 @@ public class Player : MonoBehaviour
 
         CalcualteVelocity();
 
-        transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity);
-        cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity);
+        transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity / 2);
+        cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity / 2);
         transform.Translate(velocity, Space.World);
     }
 
