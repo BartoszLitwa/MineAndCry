@@ -52,10 +52,9 @@ public class SinglePlayerMenu : MonoBehaviour
 
     public void CreateWorld()
     {
-        string Worldparam = getWorldParams();
-
         Directory.CreateDirectory(path + "/" + CreateWorldNameInput.text);
-        File.WriteAllText(path + "/" + CreateWorldNameInput.text + "/WorldSettings.txt", Worldparam);
+        string json = JsonUtility.ToJson(getWorldParams());
+        File.WriteAllText(path + "/" + CreateWorldNameInput.text + "/WorldSettings.txt", json);
 
         Helpers.CurrentWorldname = CreateWorldNameInput.text;
 
@@ -64,11 +63,15 @@ public class SinglePlayerMenu : MonoBehaviour
         SceneLoad("MainGame");
     }
 
-    string getWorldParams()
+    WorldSettings getWorldParams()
     {
-        string t = WorldSeedInput.text + " || " + GameModeDropdown.value + " || " + CreateWorldNameInput.text + " || " + AllowCheatsToggle.isOn.ToString();
-
-        return t;
+        WorldSettings world = new WorldSettings();
+        world.Seed = WorldSeedInput.text;
+        world.Gamemode = GameModeDropdown.value;
+        world.WorldName = CreateWorldNameInput.text;
+        world.AllowCheats = AllowCheatsToggle.isOn;
+        return world;
+        //return WorldSeedInput.text + " || " + GameModeDropdown.value + " || " + CreateWorldNameInput.text + " || " + AllowCheatsToggle.isOn.ToString();
     }
 
     public void RefreshWorldlist()

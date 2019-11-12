@@ -39,22 +39,14 @@ public class World : MonoBehaviour
     Queue<Queue<VoxelMod>> modifications = new Queue<Queue<VoxelMod>>();
     public Queue<Chunk> ChunksToDraw = new Queue<Chunk>();
 
-    private bool _inUI = false;
-
-    [SerializeField] private GameObject PausePanel;
-    private bool _inPauseScreen = false;
-
-    public GameObject creativeInventoryWindow;
-    public GameObject cursorSlot;
-
     Thread ChunkUpdateThread;
     public object ChunkUpdateThreadLock = new object();
     public Sprite blockIconSprites;
     string path = "";
 
-    [SerializeField] private GameObject LoadingScreenPanel;
-    [SerializeField] private Text LoadingScreenText;
-    [SerializeField] private GameObject SettingsPauseScreenPanel;
+    public GameObject LoadingScreenPanel;
+    public Text LoadingScreenText;
+    public GameObject SettingsPauseScreenPanel;
 
     private void Start()
     {
@@ -105,12 +97,16 @@ public class World : MonoBehaviour
 
         if (!loaded)
         {
-            if (Helpers.DoesThisWorldNeedLoad && chunksToCreate.Count == 0)
+            if (chunksToCreate.Count == 0)
             {
                 loaded = true;
-                LoadingScreenText.text = "Loading World...";
-                SaveManager.LoadPlacedBlocksFromFile();
-                Helpers.DoesThisWorldNeedLoad = false;
+                if (Helpers.DoesThisWorldNeedLoad)
+                {
+                    LoadingScreenText.text = "Loading World...";
+                    SaveManager.LoadPlacedBlocksFromFile();
+                    Helpers.DoesThisWorldNeedLoad = false;
+                }
+
                 TurnOffTheLoadingScreen();
             }
         }
@@ -355,50 +351,6 @@ public class World : MonoBehaviour
         return new VoxelState(GetVoxel(pos));
     }
 
-    public bool inUI
-    {
-        get {  return _inUI; }
-        set {
-            _inUI = value;
-            if (_inUI)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                creativeInventoryWindow.SetActive(true);
-                cursorSlot.SetActive(true);
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-                creativeInventoryWindow.SetActive(false);
-                cursorSlot.SetActive(false);
-            }
-        }
-    }
-
-    public bool inPauseScreen
-    {
-        get { return _inPauseScreen; }
-        set
-        {
-            _inPauseScreen = value;
-            if (_inPauseScreen)
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-                PausePanel.SetActive(true);
-            }
-            else
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-                PausePanel.SetActive(false);
-                SettingsPauseScreenPanel.SetActive(false);
-            }
-        }
-    }
-
     public int solidGroundHeight = 42;
 
     public byte GetVoxel(Vector3 pos)
@@ -497,81 +449,5 @@ public class World : MonoBehaviour
             return true;
         else
             return false;
-    }
-}
-
-[System.Serializable]
-public class Blocktype
-{
-    public string BlockName;
-    public bool IsSolid; //Is phisical block unlike air
-    public bool renderNeighbourFaces; //Can see thru a block
-    public bool hasGravity;
-    public float transparency;
-    public Sprite icon;
-
-    [Header("textures Values")]
-    public int backFacetexture;
-    public int frontFacetexture;
-    public int topFacetexture;
-    public int bottomFacetexture;
-    public int leftFacetexture;
-    public int rightFacetexture;
-
-    public Blocktype(Blocktype b)
-    {
-        BlockName = b.BlockName;
-        IsSolid = b.IsSolid;
-        renderNeighbourFaces = b.renderNeighbourFaces;
-        hasGravity = b.hasGravity;
-        transparency = b.transparency;
-        //icon = b.icon;
-        backFacetexture   = b.backFacetexture;
-        frontFacetexture  = b.frontFacetexture;
-        topFacetexture    = b.topFacetexture;
-        bottomFacetexture = b.bottomFacetexture;
-        leftFacetexture   = b.leftFacetexture;
-        rightFacetexture  = b.rightFacetexture;
-    }
-
-    //Back Front Top Bottom Left Right
-    public int GetTextureID(int faceIndex)
-    {
-        switch (faceIndex)
-        {
-            case 0:
-                return backFacetexture;
-            case 1:
-                return frontFacetexture;
-            case 2:
-                return topFacetexture;
-            case 3:
-                return bottomFacetexture;
-            case 4:
-                return leftFacetexture;
-            case 5:
-                return rightFacetexture;
-            default:
-                Debug.Log("Error in GetTextureID; Invalid face Index");
-                return 0;
-        }                  
-    }                 
-}    
-
-public class VoxelMod
-{
-    public Vector3 position;
-    public byte ID;
-
-    public VoxelMod(Vector3 _pos, byte _id)
-    {
-        position = _pos;
-        ID = _id;
-    }
-
-    public VoxelMod()
-    {
-        position = new Vector3();
-        ID = 0;
     }
 }

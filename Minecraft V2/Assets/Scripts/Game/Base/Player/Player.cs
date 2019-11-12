@@ -11,6 +11,17 @@ public class Player : MonoBehaviour
     private Transform cam;
     private World world;
 
+    private bool _inUI = false;
+
+    [SerializeField] private GameObject PausePanel;
+    private bool _inPauseScreen = false;
+
+    private bool _inConsole = false;
+
+    public GameObject creativeInventoryWindow;
+    public GameObject survivalInventoryWindow;
+    public GameObject cursorSlot;
+
     private float horizontal;
     private float vertical;
     private float mouseHorizontal;
@@ -38,23 +49,25 @@ public class Player : MonoBehaviour
     public VoxelData.GameModes GameMode;
     public bool AllowCheats;
 
+    SurvivalInevntory survInevntory = new SurvivalInevntory();
+
     private void Start()
     {
         cam = GameObject.Find("Main Camera").transform;
         world = GameObject.Find("World").GetComponent<World>();
 
-        world.inUI = false;
-        world.inPauseScreen = false;
+        inUI = false;
+        inPauseScreen = false;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            world.inUI = !world.inUI;
+            inUI = !inUI;
         }
 
-        if (!world.inUI && !world.inPauseScreen)
+        if (!inUI && !inPauseScreen)
         {
             GetPlayerInput();
             placeCursorBlocks();
@@ -63,7 +76,9 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!world.inUI)
+        CalcualteVelocity();
+
+        if (!inUI && !inPauseScreen && !inConsole)
         {  
             if (jumpRequest)
                 Jump();
@@ -72,12 +87,13 @@ public class Player : MonoBehaviour
         {
             mouseHorizontal = 0;
             mouseVertical = 0;
+            velocity.x = 0;
+            velocity.z = 0;
         }
+        
 
-        CalcualteVelocity();
-
-        transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity / 2);
-        cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity / 2);
+        transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity / 5);
+        cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity / 5);
         transform.Translate(velocity, Space.World);
     }
 
@@ -136,23 +152,55 @@ public class Player : MonoBehaviour
             if (Input.GetMouseButtonDown(0)) //Destroy
             {
                 int slotindex = 0;
+                bool inToolbarFoundSlot = false;
+                Chunk thisChunk = world.getChunkFromVector3(highlightBlock.position);
+                VoxelState voxel = thisChunk.GetVoxelFromGlobalVector3(highlightBlock.position);
                 foreach (UIItemSlots s in toolbar.slots)
                 {
                     if (!s.itemslot.HasItem)
                     {
-                        toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(world.getChunkFromVector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id, 1));
+                        toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(voxel.id, 1));
+                        inToolbarFoundSlot = true;
                         break;
                     }
-                    if (s.itemslot.stack.ID == world.getChunkFromVector3(highlightBlock.position).GetVoxelFromGlobalVector3(highlightBlock.position).id && s.itemslot.stack.amount < 64)
+                    if (s.itemslot.stack.ID == voxel.id && s.itemslot.stack.amount < 64)
                     {
                         toolbar.slots[slotindex].itemslot.Add(1);
-                        break;
+                        inToolbarFoundSlot = true;
+                        break; 
                     }
                     else
                         slotindex++;
                 }
 
-                world.getChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+                if (GameMode == VoxelData.GameModes.Survival && !inToolbarFoundSlot) //Surivival Inventory
+                {
+                    bool blockInEQ = false;
+                    foreach(UIItemSlots item in survInevntory.itemslots) //Loop to see if any of slots has this item
+                    {
+                        if(item.HasItem && item.itemslot.stack.ID == voxel.id && item.itemslot.stack.amount < 64)
+                        {
+                            item.itemslot.Add(1);
+
+                            blockInEQ = true;
+                            break;
+                        }
+                    }
+
+                    if (!blockInEQ) //Loop for the first free slot in eq
+                    {
+                        foreach(UIItemSlots item in survInevntory.itemslots)
+                        {
+                            if (!item.HasItem)
+                            {
+                                ItemStack stack = new ItemStack(voxel.id, 1);
+                                ItemSlot newSlot = new ItemSlot(item, stack);
+                            }
+                        }
+                    }
+                }
+
+                thisChunk.EditVoxel(highlightBlock.position, 0);
 
                 Vector3Int BlockPos = Helpers.Vector3ToVector3Int(highlightBlock.position);
                 CheckIfBlockWasPlacedBefore(BlockPos);
@@ -170,6 +218,88 @@ public class Player : MonoBehaviour
                     CheckIfBlockWasPlacedBefore(BlockPos);
                     PlayersBlocksPlaced.Add(new BlocksToSave(BlockPos, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID));
                 }
+            }
+        }
+    }
+
+
+    public bool inUI
+    {
+        get { return _inUI; }
+        set
+        {
+            _inUI = value;
+            if (_inUI)
+            {
+                if (!_inConsole)
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                    if (GameMode == VoxelData.GameModes.Creative)
+                        creativeInventoryWindow.SetActive(true);
+                    else
+                        survivalInventoryWindow.SetActive(true);
+
+                    cursorSlot.SetActive(true);
+                }
+            }
+            else
+            {
+                if (!_inConsole)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                    creativeInventoryWindow.SetActive(false);
+                    survivalInventoryWindow.SetActive(false);
+                    cursorSlot.SetActive(false);
+                }
+            }
+        }
+    }
+
+    public bool inPauseScreen
+    {
+        get { return _inPauseScreen; }
+        set
+        {
+            _inPauseScreen = value;
+            if (_inPauseScreen)
+            {
+                if (!_inConsole)
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                    PausePanel.SetActive(true);
+                }
+            }
+            else
+            {
+                if (!_inConsole)
+                {
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+                    PausePanel.SetActive(false);
+                    world.SettingsPauseScreenPanel.SetActive(false);
+                }
+            }
+        }
+    }
+
+    public bool inConsole
+    {
+        get { return _inConsole; }
+        set
+        {
+            _inConsole = value;
+            if (_inConsole)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
         }
     }
@@ -298,16 +428,4 @@ public class Player : MonoBehaviour
         }
     }
     #endregion
-}
-
-public class BlocksToSave
-{
-    public Vector3Int pos;
-    public byte id; //If id == 0 block got removed
-
-    public BlocksToSave(Vector3Int _pos, byte _id)
-    {
-        pos = _pos;
-        id = _id;
-    }
 }

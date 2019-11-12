@@ -20,7 +20,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 11902
+        "instanceID": 11890
     },
     "backFacetexture": 17,
     "frontFacetexture": 17,
@@ -35,7 +35,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 11914
+        "instanceID": 11906
     },
     "backFacetexture": 3,
     "frontFacetexture": 3,
@@ -50,7 +50,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 13018
+        "instanceID": 13006
     },
     "backFacetexture": 1,
     "frontFacetexture": 1,
@@ -65,7 +65,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 11910
+        "instanceID": 11902
     },
     "backFacetexture": 2,
     "frontFacetexture": 2,
@@ -80,7 +80,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 13014
+        "instanceID": 13002
     },
     "backFacetexture": 18,
     "frontFacetexture": 18,
@@ -95,7 +95,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 13020
+        "instanceID": 13008
     },
     "backFacetexture": 20,
     "frontFacetexture": 20,
@@ -110,7 +110,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 11908
+        "instanceID": 11898
     },
     "backFacetexture": 16,
     "frontFacetexture": 16,
@@ -125,7 +125,7 @@
     "hasGravity": false,
     "transparency": 1.0,
     "icon": {
-        "instanceID": 11912
+        "instanceID": 11904
     },
     "backFacetexture": 49,
     "frontFacetexture": 49,
@@ -140,7 +140,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 11904
+        "instanceID": 11892
     },
     "backFacetexture": 7,
     "frontFacetexture": 7,
@@ -155,7 +155,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 13012
+        "instanceID": 13000
     },
     "backFacetexture": 4,
     "frontFacetexture": 4,
@@ -170,7 +170,7 @@
     "hasGravity": false,
     "transparency": 0.75,
     "icon": {
-        "instanceID": 13010
+        "instanceID": 12998
     },
     "backFacetexture": 52,
     "frontFacetexture": 52,
@@ -185,7 +185,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 13016
+        "instanceID": 13004
     },
     "backFacetexture": 192,
     "frontFacetexture": 192,
@@ -200,7 +200,7 @@
     "hasGravity": false,
     "transparency": 0.0,
     "icon": {
-        "instanceID": 11906
+        "instanceID": 11894
     },
     "backFacetexture": 70,
     "frontFacetexture": 70,
@@ -208,4 +208,34 @@
     "bottomFacetexture": 71,
     "leftFacetexture": 70,
     "rightFacetexture": 70
+}||{
+    "BlockName": "CraftingTable",
+    "IsSolid": true,
+    "renderNeighbourFaces": false,
+    "hasGravity": false,
+    "transparency": 0.0,
+    "icon": {
+        "instanceID": 11900
+    },
+    "backFacetexture": 59,
+    "frontFacetexture": 59,
+    "topFacetexture": 43,
+    "bottomFacetexture": 43,
+    "leftFacetexture": 60,
+    "rightFacetexture": 60
+}||{
+    "BlockName": "Chest",
+    "IsSolid": true,
+    "renderNeighbourFaces": false,
+    "hasGravity": false,
+    "transparency": 0.0,
+    "icon": {
+        "instanceID": 11896
+    },
+    "backFacetexture": 26,
+    "frontFacetexture": 27,
+    "topFacetexture": 26,
+    "bottomFacetexture": 26,
+    "leftFacetexture": 26,
+    "rightFacetexture": 26
 }

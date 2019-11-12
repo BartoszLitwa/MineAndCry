@@ -1,6 +1,6 @@
 {
     "version": "0.01",
-    "viewDistance": 7,
+    "viewDistance": 3,
     "enableThreading": true,
     "enableChunkLoadAnimation": true,
     "seed": 0,

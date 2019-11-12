@@ -14,16 +14,18 @@ public class DragAndDropHandler : MonoBehaviour
     [SerializeField] private EventSystem m_EventSystem = null;
 
     World world;
+    Player player;
 
     private void Start()
     {
         world = GameObject.Find("World").GetComponent<World>();
+        player = GameObject.Find("Player").GetComponent<Player>();
         cursorItemSlot = new ItemSlot(cursorSlot);
     }
 
     private void Update()
     {
-        if (!world.inUI)
+        if (!player.inUI)
         {
             if(cursorSlot.itemslot != null && cursorSlot.itemslot.stack != null)
                 cursorSlot.itemslot.TakeAll();

@@ -35,7 +35,7 @@ public class SaveManager : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-            world.inPauseScreen = !world.inPauseScreen;
+            player.inPauseScreen = !player.inPauseScreen;
     }
 
     public static void LoadPlacedBlocksFromFile()
@@ -119,7 +119,7 @@ public class SaveManager : MonoBehaviour
         Debug.Log("SaveWorldToFile End method");
     }
 
-    public void BackToGameBtn() => world.inPauseScreen = !world.inPauseScreen;
+    public void BackToGameBtn() => player.inPauseScreen = !player.inPauseScreen;
 
     public void LoadScene(string sceneName) => SceneManager.LoadScene(sceneName);
 
