@@ -9,8 +9,8 @@ public class SurvivalInevntory : MonoBehaviour
     [SerializeField] private GameObject Toolbar;
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private World world;
-
-    public List<UIItemSlots> itemslots = new List<UIItemSlots>();
+    [SerializeField] private Player player;
+    [SerializeField] private ToolBar playerToolbar;
 
     void Start()
     {
@@ -19,19 +19,18 @@ public class SurvivalInevntory : MonoBehaviour
             GameObject slot = Instantiate(slotPrefab, transform);
 
             UIItemSlots Uislot = slot.GetComponent<UIItemSlots>();
-            //ItemStack stack = new ItemStack(0, 0);
             ItemSlot itemSlot = new ItemSlot(Uislot);
             itemSlot.isCreative = false;
-            itemslots.Add(Uislot);
+            Helpers.itemslots.Add(Uislot);
         }
 
-        UIItemSlots[] UISlots = Toolbar.GetComponents<UIItemSlots>();
-        for (int i = 0; i < 9; i++)
+        for (int t = 0; t < 9; t++)
         {
             GameObject slot = Instantiate(slotPrefab, ToolbarSurvivalInventory.transform);
 
             UIItemSlots UI = slot.GetComponent<UIItemSlots>();
-            UI = UISlots[i];
+            ItemSlot Islot = new ItemSlot(UI);
+            Islot = playerToolbar.slots[t].itemslot;
         }
     }
 

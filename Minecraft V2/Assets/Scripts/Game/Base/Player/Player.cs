@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     public GameObject creativeInventoryWindow;
     public GameObject survivalInventoryWindow;
     public GameObject cursorSlot;
+    public ToolBar toolbar;
 
     private float horizontal;
     private float vertical;
@@ -43,18 +44,16 @@ public class Player : MonoBehaviour
     public Transform placeBlock;
     public float checkIncrement = 0.1f;
     public float reach = 6f;
-    public ToolBar toolbar;
 
     public List<BlocksToSave> PlayersBlocksPlaced = new List<BlocksToSave>();
     public VoxelData.GameModes GameMode;
     public bool AllowCheats;
 
-    SurvivalInevntory survInevntory = new SurvivalInevntory();
-
     private void Start()
     {
         cam = GameObject.Find("Main Camera").transform;
         world = GameObject.Find("World").GetComponent<World>();
+        Helpers.toolbar = toolbar;
 
         inUI = false;
         inPauseScreen = false;
@@ -147,6 +146,11 @@ public class Player : MonoBehaviour
         if (isGrounded && Input.GetButtonDown("Jump"))
             jumpRequest = true;
 
+        HandleBlockPlacingAndDestroying();
+    }
+
+    void HandleBlockPlacingAndDestroying()
+    {
         if (highlightBlock.gameObject.activeSelf || placeBlock.gameObject.activeSelf)
         {
             if (Input.GetMouseButtonDown(0)) //Destroy
@@ -155,19 +159,19 @@ public class Player : MonoBehaviour
                 bool inToolbarFoundSlot = false;
                 Chunk thisChunk = world.getChunkFromVector3(highlightBlock.position);
                 VoxelState voxel = thisChunk.GetVoxelFromGlobalVector3(highlightBlock.position);
-                foreach (UIItemSlots s in toolbar.slots)
+                foreach (UIItemSlots s in Helpers.toolbar.slots)
                 {
                     if (!s.itemslot.HasItem)
                     {
-                        toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(voxel.id, 1));
+                        Helpers.toolbar.slots[slotindex].itemslot.InsertStack(new ItemStack(voxel.id, 1));
                         inToolbarFoundSlot = true;
                         break;
                     }
                     if (s.itemslot.stack.ID == voxel.id && s.itemslot.stack.amount < 64)
                     {
-                        toolbar.slots[slotindex].itemslot.Add(1);
+                        Helpers.toolbar.slots[slotindex].itemslot.Add(1);
                         inToolbarFoundSlot = true;
-                        break; 
+                        break;
                     }
                     else
                         slotindex++;
@@ -175,12 +179,15 @@ public class Player : MonoBehaviour
 
                 if (GameMode == VoxelData.GameModes.Survival && !inToolbarFoundSlot) //Surivival Inventory
                 {
+                    Debug.Log("inToolbarFoundSlot: " + inToolbarFoundSlot + "Count: " + Helpers.itemslots.Count);
                     bool blockInEQ = false;
-                    foreach(UIItemSlots item in survInevntory.itemslots) //Loop to see if any of slots has this item
+                    foreach (UIItemSlots item in Helpers.itemslots) //Loop to see if any of slots has this item
                     {
-                        if(item.HasItem && item.itemslot.stack.ID == voxel.id && item.itemslot.stack.amount < 64)
+                        if (item.HasItem && item.itemslot.stack.ID == voxel.id && item.itemslot.stack.amount < 64)
                         {
+                            Debug.Log("Found item in eq");
                             item.itemslot.Add(1);
+                            item.UpdateSlot();
 
                             blockInEQ = true;
                             break;
@@ -189,12 +196,16 @@ public class Player : MonoBehaviour
 
                     if (!blockInEQ) //Loop for the first free slot in eq
                     {
-                        foreach(UIItemSlots item in survInevntory.itemslots)
+                        foreach (UIItemSlots item in Helpers.itemslots)
                         {
                             if (!item.HasItem)
                             {
+                                Debug.Log("Didnt found item in eq");
                                 ItemStack stack = new ItemStack(voxel.id, 1);
                                 ItemSlot newSlot = new ItemSlot(item, stack);
+                                item.itemslot = newSlot;
+                                item.UpdateSlot();
+                                break;
                             }
                         }
                     }
@@ -209,14 +220,16 @@ public class Player : MonoBehaviour
 
             if (Input.GetMouseButtonDown(1)) //Place
             {
-                if (toolbar.slots[toolbar.slotIndex].HasItem)
+                if (Helpers.toolbar.slots[Helpers.toolbar.slotIndex].HasItem)
                 {
-                    world.getChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID);
-                    toolbar.slots[toolbar.slotIndex].itemslot.Take(1);
+                    world.getChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, Helpers.toolbar.slots[Helpers.toolbar.slotIndex].itemslot.stack.ID);
+
+                    if(GameMode == VoxelData.GameModes.Survival)
+                        Helpers.toolbar.slots[Helpers.toolbar.slotIndex].itemslot.Take(1);
 
                     Vector3Int BlockPos = Helpers.Vector3ToVector3Int(placeBlock.position);
                     CheckIfBlockWasPlacedBefore(BlockPos);
-                    PlayersBlocksPlaced.Add(new BlocksToSave(BlockPos, toolbar.slots[toolbar.slotIndex].itemslot.stack.ID));
+                    PlayersBlocksPlaced.Add(new BlocksToSave(BlockPos, Helpers.toolbar.slots[Helpers.toolbar.slotIndex].itemslot.stack.ID));
                 }
             }
         }
@@ -240,6 +253,9 @@ public class Player : MonoBehaviour
                     else
                         survivalInventoryWindow.SetActive(true);
 
+                    Helpers.toolbar.transform.localScale = Helpers.toolbarScaleOpenedSurivivalInevntory;
+                    Helpers.toolbar.transform.position = Helpers.toolbarPosOpenedSurivivalInevntory;
+
                     cursorSlot.SetActive(true);
                 }
             }
@@ -251,6 +267,9 @@ public class Player : MonoBehaviour
                     Cursor.visible = false;
                     creativeInventoryWindow.SetActive(false);
                     survivalInventoryWindow.SetActive(false);
+
+                    Helpers.toolbar.transform.localScale = Helpers.toolbarScaleClosedSurivivalInevntory;
+                    Helpers.toolbar.transform.position = Helpers.toolbarPosClosedSurivivalInevntory;
                     cursorSlot.SetActive(false);
                 }
             }

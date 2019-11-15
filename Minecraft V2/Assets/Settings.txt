@@ -1,8 +1,8 @@
 {
     "version": "0.01",
-    "viewDistance": 3,
+    "viewDistance": 16,
     "enableThreading": true,
-    "enableChunkLoadAnimation": true,
+    "enableChunkLoadAnimation": false,
     "seed": 0,
     "WorldSizeInChunks": 0,
     "mouseSensitivity": 1.0

@@ -69,7 +69,7 @@ public class ConsoleHandler : MonoBehaviour
         {
             string DoesntExists = "That command doesnt exists! Type /help";
 
-            string[] wordsComm = lastcomm.Split(" ".ToCharArray());
+            string[] wordsComm = lastcomm.ToLower().Split(" ".ToCharArray());
             int WordsInCommand = wordsComm.Length;
             if(WordsInCommand == 1)
             {
@@ -89,18 +89,18 @@ public class ConsoleHandler : MonoBehaviour
             {
                 switch (wordsComm[0])
                 {
-                    case "/Gamemode":
+                    case "/gamemode":
                     {
                         switch (wordsComm[1])
                         {
-                            case "Survival":
+                            case "survival":
                             {
                                 player.GameMode = VoxelData.GameModes.Survival;
                                        
                                 return "Your Gamemode has been changed to Survival!";
                             }
 
-                            case "Creative":
+                            case "creative":
                             {
                                 player.GameMode = VoxelData.GameModes.Creative;
                                 return "Your Gamemode has been changed to Creative!";
