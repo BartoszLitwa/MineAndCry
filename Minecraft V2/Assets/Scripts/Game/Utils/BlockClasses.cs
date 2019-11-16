@@ -1,13 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WorldSettings
 {
+    public string WorldName;
     public string Seed;
     public int Gamemode;
-    public string WorldName;
     public bool AllowCheats;
+    public string lastPlayed;
 }
 
 public class BlocksToSave

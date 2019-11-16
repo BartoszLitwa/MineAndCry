@@ -41,7 +41,8 @@ public class UIItemSlots : MonoBehaviour
         {
             slotIcon.sprite = world.blocktypes[itemslot.stack.ID].icon;
             slotAmount.text = itemslot.stack.amount.ToString();
-            slotIcon.enabled = true;
+            if(slotIcon != null)
+                slotIcon.enabled = true;
             slotAmount.enabled = true;
         }
         else
@@ -92,6 +93,12 @@ public class ItemSlot
         stack = _stack;
         uiItemSlot = _uiitemslot;
         uiItemSlot.Link(this);
+    }
+
+    public void Set(ItemStack _stack)
+    {
+        if (_stack == null) return;
+        stack = _stack;
     }
 
     public void LinkUISlot(UIItemSlots uiSlot)

@@ -9,6 +9,8 @@ public class MenuManager : MonoBehaviour
     public Text MouseSensText;
     public Slider viewDistanceSlider;
     public Text viewDistanceText;
+    public Slider FOVSlider;
+    public Text FOVText;
     public Toggle enableThreadingToggle;
     public Toggle chunkAnimToggle;
 
@@ -37,6 +39,7 @@ public class MenuManager : MonoBehaviour
 
         settings.mouseSensitivity = Mathf.FloorToInt(mouseSensSlider.value);
         settings.viewDistance = Mathf.FloorToInt(viewDistanceSlider.value);
+        settings.PlayersFOV = Mathf.FloorToInt(FOVSlider.value);
         settings.enableChunkLoadAnimation = chunkAnimToggle.isOn;
         settings.enableThreading = enableThreadingToggle.isOn;
 
@@ -51,6 +54,7 @@ public class MenuManager : MonoBehaviour
     {
         MouseSensText.text = settings.mouseSensitivity.ToString();
         viewDistanceText.text = settings.viewDistance.ToString();
+        FOVText.text = settings.PlayersFOV.ToString();
     }
 
     void SaveChangesToFile()

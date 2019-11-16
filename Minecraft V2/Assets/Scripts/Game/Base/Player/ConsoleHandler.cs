@@ -85,7 +85,12 @@ public class ConsoleHandler : MonoBehaviour
                         return DoesntExists;
                 }
             }
-            else if(WordsInCommand == 2)
+            if (!player.AllowCheats && player.GameMode == VoxelData.GameModes.Survival)
+            {
+                return "You dont have access to commands!";
+            }
+
+            if(WordsInCommand == 2)
             {
                 switch (wordsComm[0])
                 {

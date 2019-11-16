@@ -23,15 +23,6 @@ public class SurvivalInevntory : MonoBehaviour
             itemSlot.isCreative = false;
             Helpers.itemslots.Add(Uislot);
         }
-
-        for (int t = 0; t < 9; t++)
-        {
-            GameObject slot = Instantiate(slotPrefab, ToolbarSurvivalInventory.transform);
-
-            UIItemSlots UI = slot.GetComponent<UIItemSlots>();
-            ItemSlot Islot = new ItemSlot(UI);
-            Islot = playerToolbar.slots[t].itemslot;
-        }
     }
 
     void Update()

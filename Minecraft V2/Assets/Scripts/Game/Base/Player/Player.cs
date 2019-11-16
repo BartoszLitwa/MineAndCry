@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,6 +22,7 @@ public class Player : MonoBehaviour
     public GameObject creativeInventoryWindow;
     public GameObject survivalInventoryWindow;
     public GameObject cursorSlot;
+    public GameObject MainCamera;
     public ToolBar toolbar;
 
     private float horizontal;
@@ -44,6 +46,9 @@ public class Player : MonoBehaviour
     public Transform placeBlock;
     public float checkIncrement = 0.1f;
     public float reach = 6f;
+    public float clampAngle = 90.0f;
+    private float rotY = 0.0f; // rotation around the up/y axis
+    private float rotX = 0.0f; // rotation around the right/x axis
 
     public List<BlocksToSave> PlayersBlocksPlaced = new List<BlocksToSave>();
     public VoxelData.GameModes GameMode;
@@ -51,14 +56,18 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        cam = GameObject.Find("Main Camera").transform;
+        cam = MainCamera.transform;
         world = GameObject.Find("World").GetComponent<World>();
         Helpers.toolbar = toolbar;
+        Vector3 rot = cam.transform.localRotation.eulerAngles;
+        rotY = rot.y;
+        rotX = rot.x;
 
         inUI = false;
         inPauseScreen = false;
     }
 
+    bool lastIsSprinting;
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -71,6 +80,13 @@ public class Player : MonoBehaviour
             GetPlayerInput();
             placeCursorBlocks();
         }
+
+        if (isSprinting != lastIsSprinting && isSprinting)
+            Camera.main.fieldOfView += 5;
+        else if(isSprinting != lastIsSprinting && !isSprinting)
+            Camera.main.fieldOfView -= 5;
+
+        lastIsSprinting = isSprinting;
     }
 
     private void FixedUpdate()
@@ -86,13 +102,19 @@ public class Player : MonoBehaviour
         {
             mouseHorizontal = 0;
             mouseVertical = 0;
-            velocity.x = 0;
-            velocity.z = 0;
+            if (isGrounded)
+            {
+                velocity.x = 0;
+                velocity.z = 0;
+            }
         }
         
+        rotY += mouseHorizontal * world.settings.mouseSensitivity * 0.1f * Time.fixedDeltaTime; //Xaxis
+        rotX += -mouseVertical * world.settings.mouseSensitivity * 0.1f * Time.fixedDeltaTime; //Yaxis
+        rotX = Mathf.Clamp(rotX, -clampAngle, clampAngle); //Clamp Y-axis
+        cam.rotation = Quaternion.Euler(rotX, rotY, 0);
+        transform.rotation = Quaternion.Euler(0, rotY, 0);
 
-        transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivity / 5);
-        cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivity / 5);
         transform.Translate(velocity, Space.World);
     }
 
@@ -179,13 +201,11 @@ public class Player : MonoBehaviour
 
                 if (GameMode == VoxelData.GameModes.Survival && !inToolbarFoundSlot) //Surivival Inventory
                 {
-                    Debug.Log("inToolbarFoundSlot: " + inToolbarFoundSlot + "Count: " + Helpers.itemslots.Count);
                     bool blockInEQ = false;
                     foreach (UIItemSlots item in Helpers.itemslots) //Loop to see if any of slots has this item
                     {
                         if (item.HasItem && item.itemslot.stack.ID == voxel.id && item.itemslot.stack.amount < 64)
                         {
-                            Debug.Log("Found item in eq");
                             item.itemslot.Add(1);
                             item.UpdateSlot();
 
@@ -200,7 +220,6 @@ public class Player : MonoBehaviour
                         {
                             if (!item.HasItem)
                             {
-                                Debug.Log("Didnt found item in eq");
                                 ItemStack stack = new ItemStack(voxel.id, 1);
                                 ItemSlot newSlot = new ItemSlot(item, stack);
                                 item.itemslot = newSlot;

@@ -19,6 +19,7 @@ public class World : MonoBehaviour
 
     [Range(0f, 1f)]
     public float globalLightLevel;
+    public float DayCycle = 240f; //1 - 1s
     public Color day;
     public Color night;
 
@@ -48,6 +49,12 @@ public class World : MonoBehaviour
     public Text LoadingScreenText;
     public GameObject SettingsPauseScreenPanel;
 
+    bool loaded = false;
+    public float timer = 0;
+    public bool Day = true;
+
+    public WorldSettings worldSettings;
+
     private void Start()
     {
         LoadingScreenText.text = "Creating World...";
@@ -57,11 +64,15 @@ public class World : MonoBehaviour
         path = Application.dataPath + "/Worlds/" + Helpers.CurrentWorldname + "/";
         playerClass = GameObject.Find("Player").GetComponent<Player>();
 
-        Debug.Log(Helpers.CurrentWorldname);
-
         ReadGameSettingsFromFile();
 
-        UnityEngine.Random.InitState(Helpers.CurrentSeed);
+        worldSettings = SaveManager.getWorldSettingsFromFile(path + "WorldSettings.txt");
+        playerClass.AllowCheats = worldSettings.AllowCheats;
+        playerClass.GameMode = (VoxelData.GameModes)worldSettings.Gamemode;
+
+        UnityEngine.Random.InitState(int.Parse(worldSettings.Seed));
+
+        Camera.main.fieldOfView = settings.PlayersFOV;
 
         Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightlevel);
         Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
@@ -72,17 +83,15 @@ public class World : MonoBehaviour
             ChunkUpdateThread.Start(); //Start new Thread
         }
 
-        SetGlobalLightValue();
-
         spawnPosition = new Vector3((VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f, VoxelData.ChunkHeight - 50f, (VoxelData.WorldSizeInChunks * VoxelData.ChunkWidth) / 2f);
         GenerateWorld();
-        //player.position = spawnPosition;
         playerLastCoord = GetChunkCoordFromvector3(player.position);
     }
-
-    bool loaded = false;
+   
     private void Update()
     {
+        HandleDayCycle();
+
         playerChunkCoord = GetChunkCoordFromvector3(player.position);
 
         if (!playerChunkCoord.Equals(playerLastCoord))
@@ -100,10 +109,11 @@ public class World : MonoBehaviour
             if (chunksToCreate.Count == 0)
             {
                 loaded = true;
+                LoadingScreenText.text = "Loading World...";
                 if (Helpers.DoesThisWorldNeedLoad)
                 {
-                    LoadingScreenText.text = "Loading World...";
                     SaveManager.LoadPlacedBlocksFromFile();
+                    SaveManager.LoadPlayerInventoryFromFile();
                     Helpers.DoesThisWorldNeedLoad = false;
                 }
 
@@ -133,10 +143,37 @@ public class World : MonoBehaviour
         {
             ReadGameSettingsFromFile();
 
+            Camera.main.fieldOfView = settings.PlayersFOV;
+
             CheckViewDistance();
 
             Helpers.NeedReReadSettingsToGame = false;
         }
+    }
+
+    void HandleDayCycle()
+    {
+        if (timer > 1) //After 5 sec change the shader
+        {
+            SetGlobalLightValue(globalLightLevel);
+            timer = 0;
+        }
+        if (globalLightLevel < 0)
+            Day = false;
+        if (globalLightLevel >= 1)
+            Day = true;
+
+        float part = 1 / DayCycle * Time.fixedDeltaTime;
+        if (Day)
+        {
+            globalLightLevel -= part;
+        }
+        else
+        {
+            globalLightLevel += part;
+        }
+
+        timer += Time.fixedDeltaTime;
     }
 
     void ReadGameSettingsFromFile()
@@ -150,10 +187,10 @@ public class World : MonoBehaviour
         LoadingScreenPanel.SetActive(false);
     }
 
-    public void SetGlobalLightValue()
+    public void SetGlobalLightValue(float globalLight)
     {
-        Shader.SetGlobalFloat("GlobalLightlevel", globalLightLevel);
-        Camera.main.backgroundColor = Color.Lerp(night, day, globalLightLevel);
+        Shader.SetGlobalFloat("GlobalLightlevel", globalLight);
+        Camera.main.backgroundColor = Color.Lerp(night, day, globalLight);
     }
 
     void GenerateWorld()
@@ -260,8 +297,8 @@ public class World : MonoBehaviour
 
     bool IsChunkInViewDistance(ChunkCord coord)
     {
-        if (coord.x >= playerChunkCoord.x - settings.viewDistance && coord.x <= playerChunkCoord.x + settings.viewDistance &&
-            coord.z >= playerChunkCoord.z - settings.viewDistance && coord.z <= playerChunkCoord.z + settings.viewDistance)
+        if (coord.x >= playerChunkCoord.x - settings.viewDistance - 1 && coord.x <= playerChunkCoord.x + settings.viewDistance - 1 &&
+            coord.z >= playerChunkCoord.z - settings.viewDistance - 1 && coord.z <= playerChunkCoord.z + settings.viewDistance - 1)
             return true;
         else
             return false;

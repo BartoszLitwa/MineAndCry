@@ -1,0 +1,1 @@
+{"WorldName":"Test","Seed":"0","Gamemode":1,"AllowCheats":true,"lastPlayed":"16.11.2019 11:25:15"}

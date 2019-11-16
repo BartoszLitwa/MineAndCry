@@ -19,4 +19,6 @@ public class Settings
     [Header("Controls")]
     [Range(0.1f, 10f)]
     public float mouseSensitivity;
+    [Range(30f, 90f)]
+    public int PlayersFOV;
 }

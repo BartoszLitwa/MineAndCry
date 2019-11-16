@@ -57,8 +57,8 @@ public class SinglePlayerMenu : MonoBehaviour
         File.WriteAllText(path + "/" + CreateWorldNameInput.text + "/WorldSettings.txt", json);
 
         Helpers.CurrentWorldname = CreateWorldNameInput.text;
-
-        RefreshWorldlist();
+        Helpers.ThisWorld1stLoad = true;
+        //RefreshWorldlist();
 
         SceneLoad("MainGame");
     }
@@ -70,8 +70,8 @@ public class SinglePlayerMenu : MonoBehaviour
         world.Gamemode = GameModeDropdown.value;
         world.WorldName = CreateWorldNameInput.text;
         world.AllowCheats = AllowCheatsToggle.isOn;
+        world.lastPlayed = DateTime.Now.ToString();
         return world;
-        //return WorldSeedInput.text + " || " + GameModeDropdown.value + " || " + CreateWorldNameInput.text + " || " + AllowCheatsToggle.isOn.ToString();
     }
 
     public void RefreshWorldlist()
@@ -91,11 +91,13 @@ public class SinglePlayerMenu : MonoBehaviour
             if (WorldI == null)
                 continue;
 
-            WorldI.name = "World " + i;
+            WorldI.name = "World " + s;
             WorldItem item = WorldI.GetComponent<WorldItem>();
-            item.WorldName = s;
-            item.LastPlayed = DateTime.Now.Date.ToString();
-            item.GameMode = i;
+            WorldSettings set = SaveManager.getWorldSettingsFromFile(path + "/" + s + "/WorldSettings.txt");
+            Debug(set.ToString());
+            item.WorldName = set.WorldName;
+            item.LastPlayed = set.lastPlayed;
+            item.GameMode = set.Gamemode;
 
             item.InitNames();
 

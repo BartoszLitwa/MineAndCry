@@ -1,9 +1,10 @@
 {
-    "version": "0.01",
-    "viewDistance": 16,
+    "version": "",
+    "viewDistance": 8,
     "enableThreading": true,
     "enableChunkLoadAnimation": false,
     "seed": 0,
     "WorldSizeInChunks": 0,
-    "mouseSensitivity": 1.0
+    "mouseSensitivity": 20.0,
+    "PlayersFOV": 80
 }
