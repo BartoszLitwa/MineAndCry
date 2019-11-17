@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Structure
 {
-    public enum StructureType { Tree, Cactus};
+    public enum StructureType { None, Tree, Cactus, SmallHouse};
 
     public static Queue<VoxelMod> GenerateMajorFlora(StructureType type, Vector3 pos, int minTrunkheight, int maxTrunkheight)
     {
@@ -14,6 +14,8 @@ public static class Structure
                 return MakeTree(pos, minTrunkheight, maxTrunkheight);
             case StructureType.Cactus:
                 return MakeCactus(pos, minTrunkheight, maxTrunkheight);
+            case StructureType.SmallHouse:
+                return MakeSmallHouse(pos);
         }
 
         return new Queue<VoxelMod>();
@@ -67,6 +69,45 @@ public static class Structure
         for (int i = 1; i < height; i++)
         {
             queue.Enqueue(new VoxelMod(new Vector3(pos.x, pos.y + i, pos.z), (byte)VoxelData.BlockTypes.Cactus));
+        }
+
+        return queue;
+    }
+
+    public static Queue<VoxelMod> MakeSmallHouse(Vector3 pos)
+    {
+        Queue<VoxelMod> queue = new Queue<VoxelMod>();
+
+        for(int x = 0; x < 5; x++)
+        {
+            for(int z = 0; z < 5; z++)
+            {
+                queue.Enqueue(new VoxelMod(new Vector3(pos.x + x, pos.y + 1, pos.z + z), (byte)VoxelData.BlockTypes.Cobble)); //Floor
+                if(x == 0 && z == 0 || x == 0 && z == 4 || x == 4 && z== 0 || x == 4 && z == 4)
+                {
+                    for (int y = 2; y < 6; y++)
+                    {
+                        queue.Enqueue(new VoxelMod(new Vector3(pos.x + x, pos.y + y, pos.z + z), (byte)VoxelData.BlockTypes.OakWood)); //Corners
+                    }
+                }
+
+                if(x == 1 && z == 0 || x == 1 && z == 4 || x == 2 && z == 0 || x == 2 && z == 4 || x == 3 && z == 0 || x == 3 && z == 4 ||
+                   z == 1 && x == 0 || z == 1 && x == 4 || z == 2 && x == 0 || z == 2 && x == 4 || z == 3 && x == 0 || z == 3 && x == 4)
+                {
+                    for (int y = 2; y < 6; y++)
+                    {
+                        if(y != 5)
+                            queue.Enqueue(new VoxelMod(new Vector3(pos.x + x, pos.y + y, pos.z + z), (byte)VoxelData.BlockTypes.Planks)); //Walls
+                        else
+                            queue.Enqueue(new VoxelMod(new Vector3(pos.x + x, pos.y + y, pos.z + z), (byte)VoxelData.BlockTypes.Cobble));
+                    }
+                }
+
+                if(x == 1 && z == 1 || x == 1 && z == 2 || x == 1 && z == 3 || x == 2 && z == 1 || x == 2 && z == 2 || x == 2 && z == 3 || x == 3 && z == 1 || x == 3 && z == 2 || x == 3 && z == 3)
+                {
+                    queue.Enqueue(new VoxelMod(new Vector3(pos.x + x, pos.y + 5, pos.z + z), (byte)VoxelData.BlockTypes.Planks)); //ceiling
+                }
+            }
         }
 
         return queue;

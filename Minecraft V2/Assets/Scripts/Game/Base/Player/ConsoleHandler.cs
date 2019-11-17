@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ConsoleHandler : MonoBehaviour
 {
     Player player;
+    World world;
 
     [SerializeField] private GameObject ConsolePanel;
     [SerializeField] private InputField NewCommandInput;
@@ -21,6 +22,7 @@ public class ConsoleHandler : MonoBehaviour
     {
         Debug.Log("ConsoleHandler Start");
         player = GameObject.Find("Player").GetComponent<Player>();
+        world = GameObject.Find("World").GetComponent<World>();
 
         ConsolePanel.SetActive(false);
     }
@@ -110,6 +112,26 @@ public class ConsoleHandler : MonoBehaviour
                                 player.GameMode = VoxelData.GameModes.Creative;
                                 return "Your Gamemode has been changed to Creative!";
                             }
+
+                            default:
+                                return "That Gamemode doesnt exists!";
+                        }
+                    }
+                    case "/timeset":
+                    {
+                        switch (wordsComm[1])
+                        {
+                            case "day":
+                                {
+                                    world.globalLightLevel = 0.5f;
+                                    return "Time set to day!";
+                                }
+
+                            case "night":
+                                {
+                                    world.globalLightLevel = 0.06f;
+                                    return "Time set to night!";
+                                }
 
                             default:
                                 return "That Gamemode doesnt exists!";

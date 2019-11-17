@@ -20,7 +20,7 @@ MonoBehaviour:
   surfaceBlock: 5
   subSurfaceBlock: 12
   majorFloraZoneScale: 1.3
-  majorFloraStructure: 1
+  majorFloraStructure: 2
   majorFloraZoneThreshold: 0.6
   majorFloraPlacementScale: 15
   majorFloraPlacementThreshold: 0.8

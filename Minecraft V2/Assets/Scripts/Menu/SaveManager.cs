@@ -42,6 +42,9 @@ public class SaveManager : MonoBehaviour
 
     public static WorldSettings getWorldSettingsFromFile(string path)
     {
+        if (!File.Exists(path))
+            return null;
+
         string json = File.ReadAllText(path);
         return JsonUtility.FromJson<WorldSettings>(json);
     }
@@ -49,6 +52,9 @@ public class SaveManager : MonoBehaviour
     public static void LoadPlayerInventoryFromFile()
     {
         Debug.Log("LoadPlayerInventoryToFile Start");
+        if (!File.Exists(path + "/PlayerSlots.txt"))
+            return;
+
         string[] json = File.ReadAllLines(path + "/PlayerSlots.txt");
         int index = 0;
         foreach (string s in json)

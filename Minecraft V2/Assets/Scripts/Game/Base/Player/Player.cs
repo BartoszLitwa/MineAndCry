@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
 {
     public bool isGrounded;
     public bool isSprinting;
+    public bool isCrouching;
+
+    public int health = 20; //20 - full
 
     private Transform cam;
     private World world;
@@ -34,13 +37,14 @@ public class Player : MonoBehaviour
     private bool jumpRequest;
     private byte OldBlockIndex;
 
-    public float gravity = -9.8f;
+    public float gravity = -19f;
     public float walkSpeed = 4f;
     public float sprintSpeed = 6f;
-    public float jumpForce = 5;
+    public float jumpForce = 6.5f;
+    public float crouchSpeed = 2f;
 
-    public float playerWidth = 0.0f;
-    public float boundsTolerance = 0.1f;
+    public float playerWidth = 0.01f;
+    public float playerHeight = 1.8f;
 
     public Transform highlightBlock;
     public Transform placeBlock;
@@ -53,6 +57,7 @@ public class Player : MonoBehaviour
     public List<BlocksToSave> PlayersBlocksPlaced = new List<BlocksToSave>();
     public VoxelData.GameModes GameMode;
     public bool AllowCheats;
+    public Vector3 campos;
 
     private void Start()
     {
@@ -62,12 +67,12 @@ public class Player : MonoBehaviour
         Vector3 rot = cam.transform.localRotation.eulerAngles;
         rotY = rot.y;
         rotX = rot.x;
+        campos = Camera.main.transform.position;
 
         inUI = false;
         inPauseScreen = false;
     }
 
-    bool lastIsSprinting;
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -81,12 +86,25 @@ public class Player : MonoBehaviour
             placeCursorBlocks();
         }
 
+        EffectsHandler();
+    }
+
+    bool lastIsSprinting;
+    bool lastIsCrouching;
+    void EffectsHandler()
+    {
         if (isSprinting != lastIsSprinting && isSprinting)
             Camera.main.fieldOfView += 5;
-        else if(isSprinting != lastIsSprinting && !isSprinting)
+        else if (isSprinting != lastIsSprinting && !isSprinting)
             Camera.main.fieldOfView -= 5;
 
+        if (isCrouching && isCrouching != lastIsCrouching)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y - 0.5f, Camera.main.transform.position.z);
+        else if (!isCrouching && isCrouching != lastIsCrouching)
+            Camera.main.transform.position = new Vector3(Camera.main.transform.position.x, Camera.main.transform.position.y + 0.5f, Camera.main.transform.position.z);
+
         lastIsSprinting = isSprinting;
+        lastIsCrouching = isCrouching;
     }
 
     private void FixedUpdate()
@@ -108,7 +126,7 @@ public class Player : MonoBehaviour
                 velocity.z = 0;
             }
         }
-        
+
         rotY += mouseHorizontal * world.settings.mouseSensitivity * 0.1f * Time.fixedDeltaTime; //Xaxis
         rotX += -mouseVertical * world.settings.mouseSensitivity * 0.1f * Time.fixedDeltaTime; //Yaxis
         rotX = Mathf.Clamp(rotX, -clampAngle, clampAngle); //Clamp Y-axis
@@ -124,10 +142,14 @@ public class Player : MonoBehaviour
         if (verticalMomentum > gravity)
             verticalMomentum += Time.fixedDeltaTime * gravity;
 
-        if (isSprinting)
-            velocity = ((transform.forward * vertical) + (transform.right * horizontal)) * Time.fixedDeltaTime * sprintSpeed;
+        velocity = ((transform.forward * vertical) + (transform.right * horizontal)) * Time.fixedDeltaTime;
+
+        if(isCrouching && isSprinting || !isSprinting && isCrouching)
+            velocity *= crouchSpeed;
+        else if(isSprinting && !isCrouching)
+            velocity *= sprintSpeed;
         else
-            velocity = ((transform.forward * vertical) + (transform.right * horizontal)) * Time.fixedDeltaTime * walkSpeed;
+            velocity *= walkSpeed;
 
         //Apply vertical momentum (falling and jumping)
         velocity += Vector3.up * verticalMomentum * Time.fixedDeltaTime;
@@ -164,6 +186,10 @@ public class Player : MonoBehaviour
             isSprinting = true;
         if (Input.GetButtonUp("Sprint"))
             isSprinting = false;
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+            isCrouching = true;
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+            isCrouching = false;
 
         if (isGrounded && Input.GetButtonDown("Jump"))
             jumpRequest = true;
@@ -406,10 +432,10 @@ public class Player : MonoBehaviour
 
     private float checkUpSpeed(float upSpeed)
     {
-        if (world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
-            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
-            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))) ||
-            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + 1.8f + upSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))))
+        if (world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + playerHeight + upSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
+            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + playerHeight + upSpeed, Mathf.FloorToInt(transform.position.z - playerWidth))) ||
+            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x + playerWidth), transform.position.y + playerHeight + upSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))) ||
+            world.CheckForVoxel(new Vector3(Mathf.FloorToInt(transform.position.x - playerWidth), transform.position.y + playerHeight + upSpeed, Mathf.FloorToInt(transform.position.z + playerWidth))))
         {
             return 0;
         }

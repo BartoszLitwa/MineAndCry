@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class DebugScreen : MonoBehaviour
 {
     World world;
+    Player player;
     Text text;
 
     float frameRate;
@@ -17,6 +18,7 @@ public class DebugScreen : MonoBehaviour
     void Start()
     {
         world = GameObject.Find("World").GetComponent<World>();
+        player = GameObject.Find("Player").GetComponent<Player>();
         text = GetComponent<Text>();
 
         halfWorldSizeInChunks = VoxelData.WorldSizeInChunks / 2;
@@ -28,7 +30,8 @@ public class DebugScreen : MonoBehaviour
         string debugtext = "FPS: " + frameRate + "\n";
         debugtext += "X/Y/Z: " + (Mathf.FloorToInt(world.player.transform.position.x) - halfWorldSizeInVoxels) + "/" + Mathf.FloorToInt(world.player.transform.position.y)
                                 + "/" + (Mathf.FloorToInt(world.player.transform.position.z) - halfWorldSizeInVoxels) + "\n";
-        debugtext += "Chunk: " + (world.playerChunkCoord.x - halfWorldSizeInChunks) + "/" + (world.playerChunkCoord.z - halfWorldSizeInChunks);
+        debugtext += "Chunk: " + (world.playerChunkCoord.x - halfWorldSizeInChunks) + "/" + (world.playerChunkCoord.z - halfWorldSizeInChunks) + "\n";
+        debugtext += "Health: " + player.health;
 
         text.text = debugtext;
 

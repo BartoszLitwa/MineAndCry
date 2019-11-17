@@ -19,7 +19,7 @@ public class World : MonoBehaviour
 
     [Range(0f, 1f)]
     public float globalLightLevel;
-    public float DayCycle = 240f; //1 - 1s
+    public float DayCycle = 960f; //1 - 1s
     public Color day;
     public Color night;
 
@@ -459,9 +459,9 @@ public class World : MonoBehaviour
         //Flora Pass
         if(yPos == TerrainHeight && biome.placeMajorFlora)
         {
-            if (PerlinNoise.Get2DPerlin(Pos2, 0, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
+            if (PerlinNoise.Get2DPerlin(Pos2, biome.offset, biome.majorFloraZoneScale) > biome.majorFloraZoneThreshold)
             {
-                if (PerlinNoise.Get2DPerlin(Pos2, 0, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
+                if (PerlinNoise.Get2DPerlin(Pos2, biome.offset, biome.majorFloraPlacementScale) > biome.majorFloraPlacementThreshold)
                 {
                     modifications.Enqueue(Structure.GenerateMajorFlora((Structure.StructureType)biome.majorFloraStructure, pos, biome.minHeight, biome.maxHeight));
                     voxelValue = biome.surfaceBlock;

@@ -2785,6 +2785,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1325c6347d8224d9814d16d22dba02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minHeightToGetDamage: 4
+  multiplayerDamage: 1
   Healthbar: {fileID: 0}
   HealthPrefab: {fileID: 0}
   Hungerbar: {fileID: 0}
@@ -4079,10 +4081,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 843fb84a9e2bdf142bb352ba8caa2e02, type: 2}
   - {fileID: 11400000, guid: f50318b4bf5632e419ec1d2a18a0fe9a, type: 2}
   - {fileID: 11400000, guid: b5931527da743a1448ae311cd29251f2, type: 2}
+  - {fileID: 11400000, guid: aaffdafb97a930444ac05ec7424b8fb9, type: 2}
   player: {fileID: 1528582459}
   spawnPosition: {x: 0, y: 0, z: 0}
   globalLightLevel: 0.95
-  DayCycle: 240
+  DayCycle: 960
   day: {r: 0, g: 1, b: 1, a: 0}
   night: {r: 0, g: 0, b: 0, a: 0}
   material: {fileID: 2100000, guid: 8097bfad91bb0a54eb07cb7ba0428f18, type: 2}
@@ -4696,7 +4699,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: aa9e4b1e297a3fd4593661f8803f6f92, type: 3}
-    m_FontSize: 20
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
@@ -5227,6 +5230,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5244855453319684341, guid: 9bcddf024ff0ff8468eece26ae272cf6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2021742436}
+    - target: {fileID: 5244855453800710502, guid: 9bcddf024ff0ff8468eece26ae272cf6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2021742436}
+    - target: {fileID: 5244855454128565585, guid: 9bcddf024ff0ff8468eece26ae272cf6,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2021742436}
     - target: {fileID: 5244855454653755261, guid: 9bcddf024ff0ff8468eece26ae272cf6,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5332,19 +5350,14 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5244855454890002424, guid: 9bcddf024ff0ff8468eece26ae272cf6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2021742436}
     - target: {fileID: 5244855455149212603, guid: 9bcddf024ff0ff8468eece26ae272cf6,
         type: 3}
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2021742436}
-    - target: {fileID: 5244855454128565585, guid: 9bcddf024ff0ff8468eece26ae272cf6,
-        type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2021742436}
-    - target: {fileID: 5244855453800710502, guid: 9bcddf024ff0ff8468eece26ae272cf6,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2021742436}
     - target: {fileID: 5244855454582353372, guid: 9bcddf024ff0ff8468eece26ae272cf6,
@@ -5372,11 +5385,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5244855454890002424, guid: 9bcddf024ff0ff8468eece26ae272cf6,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2021742436}
     - target: {fileID: 5244855453934856129, guid: 9bcddf024ff0ff8468eece26ae272cf6,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -5407,11 +5415,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 107925517}
-    - target: {fileID: 5244855453319684341, guid: 9bcddf024ff0ff8468eece26ae272cf6,
-        type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 2021742436}
     - target: {fileID: 5244855454663616843, guid: 9bcddf024ff0ff8468eece26ae272cf6,
         type: 3}
       propertyPath: m_AnchorMax.x
