@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DamageHandler : MonoBehaviour
 {
     [SerializeField] int minHeightToGetDamage = 4;
-    [SerializeField] float multiplayerDamage = 1f;
+    [SerializeField] float multiplayerDamage = 0.5f;
 
     [SerializeField] GameObject Healthbar;
     [SerializeField] GameObject HealthPrefab;
@@ -13,53 +14,54 @@ public class DamageHandler : MonoBehaviour
     [SerializeField] GameObject Hungerbar;
     [SerializeField] GameObject HungerPrefab;
 
+    [SerializeField] GameObject DeadScreenPanel;
+    [SerializeField] Text DeadScreentText;
+
     [SerializeField] Player player;
     [SerializeField] World world;
+
+    bool lastIsGrounded;
+    bool IsInAir;
+    Vector3 LastGroundedpos;
 
     void Start()
     {
         player = GameObject.Find("Player").GetComponent<Player>();
         world = GameObject.Find("World").GetComponent<World>();
     }
-
-    bool lastIsGrounded;
-    bool CheckedFallDamage;
-    int LastCheckedHeight;
+    
     void Update()
     {
-        if(player.isGrounded != lastIsGrounded)
+        if (!world.WorldLoaded)
         {
-            CheckedFallDamage = false;
+            LastGroundedpos = Camera.main.transform.position;
+            return;
         }
 
-        if (!CheckedFallDamage && !player.isGrounded)
+        if (!IsInAir && player.isGrounded != lastIsGrounded && !player.isGrounded)
         {
-            Vector3 pos = Camera.main.transform.position;
-            Chunk thisChunk = world?.getChunkFromVector3(pos);
+            Debug.Log(Camera.main.transform.position + " InAir");
+            IsInAir = true;
 
-            bool FoundGround = false;
-            int height = 0;
-            for (int y = Mathf.FloorToInt(pos.y - player.playerHeight); !FoundGround; y--)
+        }
+        if(IsInAir && !player.isGrounded != lastIsGrounded && player.isGrounded)
+        {
+            Debug.Log(Camera.main.transform.position + " !InAir");
+            int heightDiff = (int)Mathf.Abs(LastGroundedpos.y - Camera.main.transform.position.y) + 1;
+            Debug.Log("Height diffrence: " + heightDiff);
+            if (heightDiff >= minHeightToGetDamage)
             {
-                VoxelState state = thisChunk?.GetVoxelFromGlobalVector3(new Vector3(pos.x, y, pos.z));
-                if (state == null) return;
-
-                if (state.id != (byte)VoxelData.BlockTypes.Air)
+                int dmg = Mathf.FloorToInt(heightDiff * multiplayerDamage); ;
+                player.health -= dmg;
+                Debug.Log($"Taking {dmg} damage");
+                if (player.health < 0)
                 {
-                    height = y;
-                    FoundGround = true;
+                    player.isDead = true;
                 }
             }
 
-            LastCheckedHeight = height;
-            CheckedFallDamage = true;
-        }
-
-        if(player.isGrounded && CheckedFallDamage && LastCheckedHeight >= minHeightToGetDamage)
-        {
-            player.health -= Mathf.FloorToInt(LastCheckedHeight * multiplayerDamage);
-            if (player.health < 0)
-                player.health = 0;
+            LastGroundedpos = Camera.main.transform.position;
+            IsInAir = false;
         }
 
         lastIsGrounded = player.isGrounded;

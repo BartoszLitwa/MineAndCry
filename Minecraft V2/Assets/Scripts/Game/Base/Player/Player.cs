@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     private bool _inPauseScreen = false;
 
     private bool _inConsole = false;
+    private bool _isDead = false;
 
     public GameObject creativeInventoryWindow;
     public GameObject survivalInventoryWindow;
@@ -80,7 +81,7 @@ public class Player : MonoBehaviour
             inUI = !inUI;
         }
 
-        if (!inUI && !inPauseScreen)
+        if (!inUI && !inPauseScreen && !inConsole)
         {
             GetPlayerInput();
             placeCursorBlocks();
@@ -357,6 +358,26 @@ public class Player : MonoBehaviour
             _inConsole = value;
             if (_inConsole)
             {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
+    }
+
+    public bool isDead
+    {
+        get { return _isDead; }
+        set
+        {
+            _isDead = value;
+            if (_isDead)
+            {
+                health = 0;
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
             }

@@ -49,7 +49,7 @@ public class World : MonoBehaviour
     public Text LoadingScreenText;
     public GameObject SettingsPauseScreenPanel;
 
-    bool loaded = false;
+    public bool WorldLoaded = false;
     public float timer = 0;
     public bool Day = true;
 
@@ -104,11 +104,11 @@ public class World : MonoBehaviour
             CreateChunk();
         }
 
-        if (!loaded)
+        if (!WorldLoaded)
         {
             if (chunksToCreate.Count == 0)
             {
-                loaded = true;
+                WorldLoaded = true;
                 LoadingScreenText.text = "Loading World...";
                 if (Helpers.DoesThisWorldNeedLoad)
                 {
