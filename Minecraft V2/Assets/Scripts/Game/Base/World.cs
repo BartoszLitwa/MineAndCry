@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class World : MonoBehaviour
 {
     public Settings settings = new Settings();
-    SaveManager saveManager = new SaveManager();
     public string WorldName = "World";
     public Player playerClass;
     

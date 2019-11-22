@@ -20,6 +20,8 @@ public class DamageHandler : MonoBehaviour
     [SerializeField] Player player;
     [SerializeField] World world;
 
+    public List<GameObject> Hearts = new List<GameObject>();
+
     bool lastIsGrounded;
     bool IsInAir;
     Vector3 LastGroundedpos;
@@ -28,6 +30,12 @@ public class DamageHandler : MonoBehaviour
     {
         player = GameObject.Find("Player").GetComponent<Player>();
         world = GameObject.Find("World").GetComponent<World>();
+
+        for(int i = 0; i < player.health / 2; i++)
+        {
+            GameObject heart = Instantiate(HealthPrefab, new Vector3(Healthbar.transform.position.x - 400 + i * 40, Healthbar.transform.position.y - 10, Healthbar.transform.position.z), Quaternion.identity, Healthbar.transform);
+            Hearts.Add(heart);
+        }
     }
     
     void Update()
@@ -51,9 +59,10 @@ public class DamageHandler : MonoBehaviour
             Debug.Log("Height diffrence: " + heightDiff);
             if (heightDiff >= minHeightToGetDamage)
             {
-                int dmg = Mathf.FloorToInt(heightDiff * multiplayerDamage); ;
+                int dmg = Mathf.FloorToInt((heightDiff - 3) * multiplayerDamage); ;
                 player.health -= dmg;
                 Debug.Log($"Taking {dmg} damage");
+                UpdateUIHeartsState();
                 if (player.health < 0)
                 {
                     player.isDead = true;
@@ -65,5 +74,31 @@ public class DamageHandler : MonoBehaviour
         }
 
         lastIsGrounded = player.isGrounded;
+    }
+
+    void UpdateUIHeartsState()
+    {
+        int PlayerHealth = player.health;
+        bool hasHalHeart = false;
+        if (PlayerHealth % 2 != 0)
+        {
+            --PlayerHealth;
+            hasHalHeart = true;
+        }
+        for(int i = 0; i < PlayerHealth / 2; i++)
+        {
+            HeartItem temp = Hearts[i].GetComponent<HeartItem>();
+            temp.HeartStateChanged(true, true);
+        }
+        for (int i = PlayerHealth / 2; i < 10; i++)
+        {
+            HeartItem temp = Hearts[i].GetComponent<HeartItem>();
+            temp.HeartStateChanged(true, false);
+        }
+        if (hasHalHeart)
+        {
+            HeartItem temp = Hearts[PlayerHealth / 2 + 2].GetComponent<HeartItem>();
+            temp.HeartStateChanged(false, true);
+        }
     }
 }
